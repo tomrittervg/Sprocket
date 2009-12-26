@@ -13,7 +13,7 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="50" x:Name="NoSPLoadedRow" />
-            <RowDefinition Height="0" x:Name="SPLoadedRow" />
+            <RowDefinition Height="400" x:Name="SPLoadedRow" />
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0" Grid.Row="0"
@@ -45,27 +45,93 @@
                 >You haven't loaded a procedure yet</Label>
         </StackPanel>
 
-        <ListView Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
-                  Name="spParameters" HorizontalAlignment="Stretch" >
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="200" Header="Name"
-                                    DisplayMemberBinding="{Binding Name}"
-                                    />
-                    <GridViewColumn Width="100" Header="Type"
-                                    DisplayMemberBinding="{Binding Type}"
-                                    />
-                    <GridViewColumn Header="Value" Width="486">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox HorizontalAlignment="Stretch"
-                                         ></TextBox>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                    >
+            <StackPanel Orientation="Horizontal">
+                <Label Width="200" >Where is the original?</Label>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Height="25">
+                        <RadioButton VerticalAlignment="Center" 
+                                     Name="originalProcLocation_PhysicalFile"
+                                     GroupName="originalProcLocation"
+                                     >A Physical File...</RadioButton>
+                        <Label VerticalAlignment="Center" Margin="15,0,15,0"
+                               Name="originalProcLocation_PhysicalFile_Name"
+                               MaxWidth="397"
+                            >...no file selected...</Label>
+                        <Button Height="20" VerticalAlignment="Center"
+                                Name="originalProcLocation_PhysicalFile_Button"
+                                Click="originalProcLocation_PhysicalFile_Button_Click"
+                                IsEnabled="{Binding ElementName=originalProcLocation_PhysicalFile, Path=IsChecked}"
+                            >Select File</Button>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Height="25">
+                        <RadioButton VerticalAlignment="Center" 
+                                     Name="originalProcLocation_AnotherProc"
+                                     GroupName="originalProcLocation"
+                                     IsEnabled="False"
+                                     >Another Procedure...</RadioButton>
+                        <TextBox Height="20" VerticalAlignment="Center" Width="350"
+                                 Margin="15,0,15,0"
+                                 IsEnabled="{Binding ElementName=originalProcLocation_AnotherProc, Path=IsChecked}"
+                            ></TextBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Height="25">
+                        <RadioButton VerticalAlignment="Center" IsEnabled="False"
+                                     GroupName="originalProcLocation"
+                                 >I haven't modified it - start a project</RadioButton>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+            <ListView Name="spParameters" HorizontalAlignment="Stretch">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Width="200" Header="Name"
+                                        DisplayMemberBinding="{Binding Name}"
+                                        />
+                        <GridViewColumn Width="100" Header="Type"
+                                        DisplayMemberBinding="{Binding Type}"
+                                        />
+                        <GridViewColumn Header="Value" Width="486">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,0,5">
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton GroupName="{Binding Name}"
+                                                         Name="paramNameSource_ConstantValue"
+                                                         Width="150"
+                                                         >Constant Value</RadioButton>
+                                            <TextBox Width="400"
+                                                IsEnabled="{Binding ElementName=paramNameSource_ConstantValue, Path=IsChecked}"
+                                                ></TextBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton GroupName="{Binding Name}"
+                                                         Name="paramNameSource_CSV"
+                                                         Width="150"
+                                                         >Comma Seperated List</RadioButton>
+                                            <TextBox
+                                                Width="400"
+                                                IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"
+                                                ></TextBox>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton GroupName="{Binding Name}"
+                                                         Name="paramNameSource_QueryResults"
+                                                         Width="150"
+                                                         >Result of Query</RadioButton>
+                                            <TextBlock
+                                                Width="400"
+                                                IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                ></TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
     </Grid>
-
 </Window>

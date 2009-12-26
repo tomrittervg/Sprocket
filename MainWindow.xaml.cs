@@ -37,5 +37,17 @@ namespace Sprocket
                 NoSPLoadedRow.Height = new GridLength();
             }
         }
+
+        private void originalProcLocation_PhysicalFile_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.DefaultExt = ".sql";
+
+            bool? result = ofd.ShowDialog();
+            if (result == true)
+            {
+                originalProcLocation_PhysicalFile_Name.Content = ofd.FileName;
+            }
+        }
     }
 }
