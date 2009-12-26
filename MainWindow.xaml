@@ -1,8 +1,67 @@
-﻿<Window x:Class="Sprocket.Window1"
+﻿<Window x:Class="Sprocket.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Window1" Height="300" Width="300">
-    <Grid>
-        
+    Title="Sprocket" Height="600" Width="800">
+    <Grid Name="mainLayoutGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="50" x:Name="NoSPLoadedRow" />
+            <RowDefinition Height="0" x:Name="SPLoadedRow" />
+        </Grid.RowDefinitions>
+
+        <Label Grid.Column="0" Grid.Row="0"
+               >Server:</Label>
+        <TextBox Grid.Column="1" Grid.Row="0"
+                 ></TextBox>
+
+        <Label Grid.Column="0" Grid.Row="1"
+               >Database:</Label>
+        <TextBox Grid.Column="1" Grid.Row="1"
+                 ></TextBox>
+
+        <Label Grid.Column="0" Grid.Row="2"
+               >Stored Procedure:</Label>
+        <TextBox Grid.Column="1" Grid.Row="2"
+                 ></TextBox>
+
+        <Button Grid.Column="1" Grid.Row="3"
+                Width="150" HorizontalAlignment="Right" Click="loadProc">Load Stored Procedure</Button>
+
+        <StackPanel Grid.Column="0" Grid.ColumnSpan="2"
+                    Grid.Row="4"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+               >
+            <Label>You haven't loaded a procedure yet</Label>
+        </StackPanel>
+
+        <ListView Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                  Name="spParameters" HorizontalAlignment="Stretch" >
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="200" Header="Name"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    />
+                    <GridViewColumn Width="100" Header="Type"
+                                    DisplayMemberBinding="{Binding Type}"
+                                    />
+                    <GridViewColumn Header="Value" Width="486">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox HorizontalAlignment="Stretch"
+                                         ></TextBox>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
+
 </Window>

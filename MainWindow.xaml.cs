@@ -17,11 +17,32 @@ namespace Sprocket
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class Window1 : Window
+    public partial class MainWindow : Window
     {
-        public Window1()
+        public MainWindow()
         {
             InitializeComponent();
+
+            AssertNoDesignChanges();
+        }
+
+        public void PopulateSPParamaters()
+        {
+            var pretend = new List<SQLParam>()
+            {
+                new SQLParam("companyId", "int"),
+                new SQLParam("objectId", "int"),
+                new SQLParam("ninja", "varchar(255)")
+            };
+            spParameters.ItemsSource = pretend;
+        }
+
+        private void loadProc(object sender, RoutedEventArgs e)
+        {
+            NoSPLoadedRow.Height = new GridLength(0);
+            SPLoadedRow.Height = new GridLength();
+
+            PopulateSPParamaters();
         }
     }
 }
