@@ -4,13 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Data.SqlClient;
 
 namespace Sprocket
 {
@@ -26,23 +20,22 @@ namespace Sprocket
             AssertNoDesignChanges();
         }
 
-        public void PopulateSPParamaters()
-        {
-            var pretend = new List<SQLParam>()
-            {
-                new SQLParam("companyId", "int"),
-                new SQLParam("objectId", "int"),
-                new SQLParam("ninja", "varchar(255)")
-            };
-            spParameters.ItemsSource = pretend;
-        }
-
         private void loadProc(object sender, RoutedEventArgs e)
         {
             NoSPLoadedRow.Height = new GridLength(0);
-            SPLoadedRow.Height = new GridLength();
+            SPLoadedRow.Height = new GridLength(0);
 
-            PopulateSPParamaters();
+            try
+            {
+                var data = SQL.Queries.GetStoredProcParameters(serverName.Text, database.Text, procName.Text);
+                spParameters.ItemsSource = data;
+                SPLoadedRow.Height = new GridLength();
+            }
+            catch (SqlException ex)
+            {
+                noParamsStatusMessage.Content = "Procedure Load Failed: \n" + ex.Message;
+                NoSPLoadedRow.Height = new GridLength();
+            }
         }
     }
 }

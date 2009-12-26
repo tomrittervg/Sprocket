@@ -19,17 +19,20 @@
         <Label Grid.Column="0" Grid.Row="0"
                >Server:</Label>
         <TextBox Grid.Column="1" Grid.Row="0"
-                 ></TextBox>
+                 Name="serverName"
+                 >localhost\sqlexpress</TextBox>
 
         <Label Grid.Column="0" Grid.Row="1"
                >Database:</Label>
         <TextBox Grid.Column="1" Grid.Row="1"
-                 ></TextBox>
+                 Name="database"
+                 >testdatabase</TextBox>
 
         <Label Grid.Column="0" Grid.Row="2"
                >Stored Procedure:</Label>
         <TextBox Grid.Column="1" Grid.Row="2"
-                 ></TextBox>
+                 Name="procName"
+                 >testproc_prc</TextBox>
 
         <Button Grid.Column="1" Grid.Row="3"
                 Width="150" HorizontalAlignment="Right" Click="loadProc">Load Stored Procedure</Button>
@@ -38,7 +41,8 @@
                     Grid.Row="4"
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                >
-            <Label>You haven't loaded a procedure yet</Label>
+            <Label Name="noParamsStatusMessage"
+                >You haven't loaded a procedure yet</Label>
         </StackPanel>
 
         <ListView Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
