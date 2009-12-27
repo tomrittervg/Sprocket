@@ -19,6 +19,13 @@ namespace Sprocket
 
             return s.Substring(0, startIndex) + replaceWith + s.Substring(startIndex + searchFor.Length);
         }
+        public static string ReplaceLast(this string s, string searchFor, string replaceWith)
+        {
+            int startIndex = s.LastIndexOf(searchFor);
+            if (startIndex < 0) return s;
+
+            return s.Substring(0, startIndex) + replaceWith + s.Substring(startIndex + searchFor.Length);
+        }
 
         public static int CountOf(this string s, char searchFor)
         {

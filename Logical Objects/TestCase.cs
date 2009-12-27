@@ -11,28 +11,28 @@ namespace Sprocket
 
         public TestCase(List<string> orderedValues, List<SQLParamTestValues> orderedParameters)
         {
-            if(orderedParameters.Count != orderedValues.Count) throw new WTFException();
+            if (orderedParameters.Count != orderedValues.Count) throw new WTFException();
 
             values = new Dictionary<string, string>();
+            Parameters = new List<SQLParam>();
 
             for (int i = 0; i < orderedParameters.Count; i++)
+            {
+                Parameters.Add(orderedParameters[i].Parameter);
                 values.Add(orderedParameters[i].Parameter.Name, orderedValues[i]);
-        }
-
-        public IEnumerable<string> AllParameters
-        {
-            get
-            {
-                return values.Keys;
             }
         }
 
-        public string this[string key]
+        public List<SQLParam> Parameters { get; protected set; }
+
+        public string GetEscapedValue(SQLParam key)
         {
-            get
-            {
-                return values[key];
-            }
+            var val = values[key.Name];
+            
+            if (key.Type == "varchar")
+                return "'" + val + "'";
+            else
+                return val;
         }
     }
 }

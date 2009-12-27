@@ -16,10 +16,10 @@ namespace Sprocket.DiffEngine
             _binary = FindTortoiseBinary();
         }
 
-        public void ShowDiffWindowFiles(string oldFileName, string newFileName)
+        public void ShowDiffWindowFiles(ComparisonPair compareFiles)
         {
             Process job = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo(_binary, string.Format("{0} {1}", oldFileName, newFileName));
+            ProcessStartInfo startInfo = new ProcessStartInfo(_binary, string.Format("\"{0}\" \"{1}\"", compareFiles.Old, compareFiles.New));
             startInfo.UseShellExecute = true;
             job.StartInfo = startInfo;
             job.Start();
@@ -28,12 +28,12 @@ namespace Sprocket.DiffEngine
             job.Close();
         }
 
-        public void ShowDiffWindowStrings(string oldstring, string newstring)
+        public void ShowDiffWindowStrings(ComparisonPair compareStrings)
         {
             throw new NotImplementedException();
 
             Process job = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo(_binary, string.Format("{0} {1}", oldstring, oldstring));
+            ProcessStartInfo startInfo = new ProcessStartInfo(_binary, string.Format("{0} {1}", compareStrings.Old, compareStrings.New));
             startInfo.UseShellExecute = true;
             job.StartInfo = startInfo;
             job.Start();

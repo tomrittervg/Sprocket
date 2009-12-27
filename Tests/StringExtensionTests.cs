@@ -70,5 +70,34 @@ namespace Tests
             string s = "123454321";
             Assert.IsTrue(s.CountOf('5') == 1);
         }
+
+        [TestMethod]
+        public void StringExtensionTest10()
+        {
+            string s = "Hello World, Mom, and Dad";
+            string r = s.ReplaceFirst("World", "Universe");
+            Assert.IsTrue(r == "Hello Universe, Mom, and Dad");
+        }
+        [TestMethod]
+        public void StringExtensionTest11()
+        {
+            string s = "One Two Two Three";
+            string r = s.ReplaceFirst("One", "Ninja");
+            Assert.IsTrue(r == "Ninja Two Two Three");
+        }
+        [TestMethod]
+        public void StringExtensionTest12()
+        {
+            string s = "One Two Two Three";
+            string r = s.ReplaceFirst("Two", "Ninja");
+            Assert.IsTrue(r == "One Two Ninja Three");
+        }
+        [TestMethod]
+        public void StringExtensionTest13()
+        {
+            string s = "One Two Two Three";
+            string r = s.ReplaceFirst("Three", "Ninja");
+            Assert.IsTrue(r == "One Two Two Ninja");
+        }
     }
 }

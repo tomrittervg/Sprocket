@@ -16,6 +16,7 @@ namespace Sprocket
         public TestContext CurentContext { get; set; }
         public static Random rndm = new Random();
         public static System.Diagnostics.Process CurrentProcess = System.Diagnostics.Process.GetCurrentProcess();
+        public static List<string> TemporaryFilesCreated = new List<string>();
 
         public MainWindow()
         {
@@ -71,6 +72,7 @@ namespace Sprocket
         private void MainWin_Closed(object sender, EventArgs e)
         {
             //delete all stored procs that start with "sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString()
+            //delete all TemporaryFilesCreated
         }
     }
 }
