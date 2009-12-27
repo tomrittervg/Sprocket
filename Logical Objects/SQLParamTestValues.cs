@@ -62,7 +62,7 @@ namespace Sprocket
             set
             {
                 StoreCurrentTestValue();
-                _csv = value;
+                _csv = value.Replace(",,", ",").TrimEnd(',');
                 ChangeProperty("CSV");
             }
         }
@@ -88,7 +88,7 @@ namespace Sprocket
                 if (this.TestType == SQLParamTestType.ConstantValue)
                     return 1;
                 else if (this.TestType == SQLParamTestType.CSV)
-                    return this.CSV.CountOf(',');
+                    return this.CSV.CountOf(',') + 1;
                 else
                     throw new WTFException();
             }

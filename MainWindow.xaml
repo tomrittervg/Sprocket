@@ -108,9 +108,10 @@
                                                  Checked="ReloadContextFromGUI"
                                                  >Constant Value</RadioButton>
                                         <TextBox Width="400"
-                                             Tag="{Binding Name}"
-                                             KeyUp="paramNameSource_ConstantValue_KeyUp"
-                                             IsEnabled="{Binding ElementName=paramNameSource_ConstantValue, Path=IsChecked}"
+                                                 Name="paramNameSource_ConstantValue_value"
+                                                 Tag="{Binding Name}"
+                                                 KeyUp="paramNameSource_TextBox_KeyUp"
+                                                 IsEnabled="{Binding ElementName=paramNameSource_ConstantValue, Path=IsChecked}"
                                             ></TextBox>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
@@ -118,10 +119,12 @@
                                                  Name="paramNameSource_CSV"
                                                  Width="150"
                                                  Checked="ReloadContextFromGUI"
-                                                 IsEnabled="false"
                                                  >Comma Seperated List</RadioButton>
                                         <TextBox Width="400"
-                                             IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"
+                                                 Name="paramNameSource_CSV_value"
+                                                 Tag="{Binding Name}"
+                                                 KeyUp="paramNameSource_TextBox_KeyUp"
+                                                 IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"
                                              ></TextBox>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">

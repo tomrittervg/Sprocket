@@ -63,10 +63,17 @@ namespace Sprocket
             }
         }
 
-        private void paramNameSource_ConstantValue_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private void paramNameSource_TextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var txtBox = sender as TextBox;
-            CurentContext.ParameterValues.Find(x => x.Parameter.Name == txtBox.Tag.ToString()).ConstantValue = txtBox.Text;
+            var paramTestValue = CurentContext.ParameterValues.Find(x => x.Parameter.Name == txtBox.Tag.ToString());
+
+            if (txtBox.Name == "paramNameSource_ConstantValue_value")
+                paramTestValue.ConstantValue = txtBox.Text;
+            else if (txtBox.Name == "paramNameSource_CSV_value")
+                paramTestValue.CSV = txtBox.Text;
+            else
+                throw new WTFException();
         }
 
         private void MainWin_Closed(object sender, EventArgs e)
