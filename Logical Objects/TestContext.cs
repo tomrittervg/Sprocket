@@ -14,7 +14,7 @@ namespace Sprocket
     }
 
     [Serializable]
-    public class TestContext : INotifyPropertyChanged
+    public partial class TestContext : INotifyPropertyChanged
     {
         public TestContext()
         {
@@ -51,7 +51,7 @@ namespace Sprocket
         #endregion
 
         #region Stored Procedure
-        public string _storedProcedure { get; set; }
+        private string _storedProcedure { get; set; }
         public string StoredProcedure
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -66,7 +66,7 @@ namespace Sprocket
         #endregion
 
         #region OriginalProcLocation
-        public OriginalProcLocations _originalProcLocation { get; set; }
+        private OriginalProcLocations _originalProcLocation { get; set; }
         public OriginalProcLocations OriginalProcLocation
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -81,7 +81,7 @@ namespace Sprocket
         #endregion
 
         #region OriginalProcFilename
-        public string _originalProcFilename { get; set; }
+        private string _originalProcFilename { get; set; }
         public string OriginalProcFilename
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -95,7 +95,7 @@ namespace Sprocket
         }
         #endregion
         #region ComparisonProc
-        public string _comparisonProc { get; set; }
+        private string _comparisonProc { get; set; }
         public string ComparisonProc
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -127,8 +127,17 @@ namespace Sprocket
             this.SetUpOriginalProc();
 
             var runner = new TestRunner(this);
+            runner.RunTests();
         }
         //==================================================================================================================
+
+        public int QueryCombinations
+        {
+            get
+            {
+                return this.ParameterValues.QueryCombinations();
+            }
+        }
 
         public bool IsValidContext
         {
@@ -152,6 +161,17 @@ namespace Sprocket
                     originalProcValid &&
                     ParameterValues != null &&
                     ParameterValues.All(x => x.IsValidTestValue);
+            }
+        }
+
+        private List<TestCase> _testCases;
+        public List<TestCase> TestCases
+        {
+            get
+            {
+                if (_testCases == null) 
+                    _testCases = IronPython.GetTestCases(this.ParameterValues);
+                return _testCases;
             }
         }
 
@@ -195,6 +215,7 @@ namespace Sprocket
         private bool? _isValidContextBeforeChange;
         private void ChangeProperty(string property)
         {
+            _testCases = null;
             if (_isValidContextBeforeChange == null) throw new WTFException();
             if (PropertyChanged != null)
             {

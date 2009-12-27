@@ -33,6 +33,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IronPython, Version=2.6.10920.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\IronPython.dll</HintPath>
+    </Reference>
+    <Reference Include="IronPython.Modules, Version=2.6.10920.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\IronPython.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Microsoft.Scripting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Microsoft.Scripting.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Scripting.ExtensionAttribute, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Microsoft.Scripting.ExtensionAttribute.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -68,13 +88,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Asserts.cs" />
     <Compile Include="Diff Engine\IDiffEngine.cs" />
     <Compile Include="Diff Engine\TortoiseMerge.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="IronPython\TestContext.cs" />
+    <Compile Include="Logical Objects\ComparisonPair.cs" />
     <Compile Include="Logical Objects\SQLParam.cs" />
     <Compile Include="Logical Objects\SQLParamTestValues.cs" />
+    <Compile Include="Logical Objects\TestCase.cs" />
     <Compile Include="Logical Objects\TestContext.cs" />
     <Compile Include="Logical Objects\TestRunner.cs" />
     <Compile Include="Logical Objects\WTFException.cs" />

@@ -114,6 +114,34 @@ namespace Sprocket
             }
         }
 
+        private List<string> _testValues;
+        public List<string> TestValues
+        {
+            get
+            {
+                if (_testValues == null)
+                    _testValues = this.GetTestValues();
+                return _testValues;
+            }
+        }
+
+        private List<string> GetTestValues()
+        {
+            if (TestType == SQLParamTestType.Unset)
+                throw new WTFException();
+            else if (TestType == SQLParamTestType.ConstantValue)
+                return new List<string>() { this.ConstantValue };
+            else if (TestType == SQLParamTestType.CSV)
+            {
+                var ret = new List<string>();
+                ret.AddRange(this.CSV.Split(','));
+                ret.ConvertAll<string>(x => x.Trim());
+                return ret;
+            }
+            else
+                throw new WTFException();
+        }
+
         #region INotifyPropertyChanged Stuff
         private void StoreCurrentTestValue()
         {
@@ -123,6 +151,7 @@ namespace Sprocket
         private bool? _isValidTestValueBeforeChange;
         private void ChangeProperty(string property)
         {
+            _testValues = null;
             if (_isValidTestValueBeforeChange == null) throw new WTFException();
             if (PropertyChanged != null)
             {

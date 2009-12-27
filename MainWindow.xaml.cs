@@ -21,8 +21,6 @@ namespace Sprocket
         {
             CurentContext = new TestContext();
             InitializeComponent();
-
-            AssertNoDesignChanges();
         }
 
         private void originalProcLocation_PhysicalFile_Button_Click(object sender, RoutedEventArgs e)
