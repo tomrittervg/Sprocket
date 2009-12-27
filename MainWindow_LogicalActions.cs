@@ -32,5 +32,11 @@ namespace Sprocket
         {
             CurentContext.RunTests();
         }
+
+        private void MainWin_Closed(object sender, EventArgs e)
+        {
+            //delete all stored procs that start with "sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString()
+            //delete all TemporaryFilesCreated
+        }
     }
 }

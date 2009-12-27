@@ -55,7 +55,6 @@ namespace Sprocket
 
                     if (radio.Name == "paramNameSource_QueryResults") testtype = SQLParamTestType.Query;
                     else if (radio.Name == "paramNameSource_CSV") testtype = SQLParamTestType.CSV;
-                    else if (radio.Name == "paramNameSource_ConstantValue") testtype = SQLParamTestType.ConstantValue;
                     else throw new WTFException();
 
                     CurentContext.ParameterValues.Find(x => x.Parameter.Name == radio.GroupName).TestType = testtype;
@@ -68,18 +67,10 @@ namespace Sprocket
             var txtBox = sender as TextBox;
             var paramTestValue = CurentContext.ParameterValues.Find(x => x.Parameter.Name == txtBox.Tag.ToString());
 
-            if (txtBox.Name == "paramNameSource_ConstantValue_value")
-                paramTestValue.ConstantValue = txtBox.Text;
-            else if (txtBox.Name == "paramNameSource_CSV_value")
+            if (txtBox.Name == "paramNameSource_CSV_value")
                 paramTestValue.CSV = txtBox.Text;
             else
                 throw new WTFException();
-        }
-
-        private void MainWin_Closed(object sender, EventArgs e)
-        {
-            //delete all stored procs that start with "sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString()
-            //delete all TemporaryFilesCreated
         }
     }
 }

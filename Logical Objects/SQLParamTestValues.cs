@@ -9,9 +9,8 @@ namespace Sprocket
     public enum SQLParamTestType
     {
         Unset = 0,
-        ConstantValue = 1,
-        CSV = 2,
-        Query = 3
+        CSV = 1,
+        Query = 2
     }
 
     public class SQLParamTestValues : INotifyPropertyChanged
@@ -39,20 +38,6 @@ namespace Sprocket
         }
         #endregion
 
-        #region ConstantValue
-        private string _constantValue;
-        public string ConstantValue
-        {
-            [System.Diagnostics.DebuggerStepThrough]
-            get { return _constantValue; }
-            set
-            {
-                StoreCurrentTestValue();
-                _constantValue = value;
-                ChangeProperty("ConstantValue");
-            }
-        }
-        #endregion
         #region CSV
         private string _csv;
         public string CSV
@@ -85,9 +70,7 @@ namespace Sprocket
         {
             get
             {
-                if (this.TestType == SQLParamTestType.ConstantValue)
-                    return 1;
-                else if (this.TestType == SQLParamTestType.CSV)
+if (this.TestType == SQLParamTestType.CSV)
                     return this.CSV.CountOf(',') + 1;
                 else
                     throw new WTFException();
@@ -101,8 +84,6 @@ namespace Sprocket
                 bool testTypeValid = false;
                 if (this.TestType == SQLParamTestType.Unset)
                     testTypeValid = false;
-                else if (this.TestType == SQLParamTestType.ConstantValue)
-                    testTypeValid = !this.ConstantValue.IsNullOrEmpty();
                 else if (this.TestType == SQLParamTestType.CSV)
                     testTypeValid = !string.IsNullOrEmpty(this.CSV);
                 else
@@ -129,8 +110,6 @@ namespace Sprocket
         {
             if (TestType == SQLParamTestType.Unset)
                 throw new WTFException();
-            else if (TestType == SQLParamTestType.ConstantValue)
-                return new List<string>() { this.ConstantValue };
             else if (TestType == SQLParamTestType.CSV)
             {
                 var ret = new List<string>();
