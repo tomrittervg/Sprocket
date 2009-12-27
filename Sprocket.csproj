@@ -70,6 +70,9 @@
   <ItemGroup>
     <Compile Include="Asserts.cs" />
     <Compile Include="Logical Objects\SQLParam.cs" />
+    <Compile Include="Logical Objects\SQLParamTestValues.cs" />
+    <Compile Include="Logical Objects\TestContext.cs" />
+    <Compile Include="Logical Objects\WTFException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

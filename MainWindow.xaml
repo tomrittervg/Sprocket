@@ -1,4 +1,4 @@
-﻿<Window x:Class="Sprocket.MainWindow"
+﻿<Window x:Class="Sprocket.MainWindow" x:Name="MainWin"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Title="Sprocket" Height="600" Width="800">
@@ -13,47 +13,50 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="50" x:Name="NoSPLoadedRow" />
-            <RowDefinition Height="400" x:Name="SPLoadedRow" />
+            <RowDefinition Height="0" x:Name="SPLoadedRow" />
         </Grid.RowDefinitions>
 
         <Label Grid.Column="0" Grid.Row="0"
                >Server:</Label>
         <TextBox Grid.Column="1" Grid.Row="0"
                  Name="serverName"
+                 KeyUp="ReloadContextFromGUI"
                  >localhost\sqlexpress</TextBox>
 
         <Label Grid.Column="0" Grid.Row="1"
                >Database:</Label>
         <TextBox Grid.Column="1" Grid.Row="1"
                  Name="database"
+                 KeyUp="ReloadContextFromGUI"
                  >testdatabase</TextBox>
 
         <Label Grid.Column="0" Grid.Row="2"
                >Stored Procedure:</Label>
         <TextBox Grid.Column="1" Grid.Row="2"
                  Name="procName"
+                 KeyUp="ReloadContextFromGUI"
                  >testproc_prc</TextBox>
 
         <Button Grid.Column="1" Grid.Row="3"
-                Width="150" HorizontalAlignment="Right" Click="loadProc">Load Stored Procedure</Button>
+                Width="150" HorizontalAlignment="Right" Click="loadProc"
+                >Load Stored Procedure</Button>
 
         <StackPanel Grid.Column="0" Grid.ColumnSpan="2"
                     Grid.Row="4"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-               >
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
             <Label Name="noParamsStatusMessage"
                 >You haven't loaded a procedure yet</Label>
         </StackPanel>
 
-        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
-                    >
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
             <StackPanel Orientation="Horizontal">
                 <Label Width="200" >Where is the original?</Label>
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Height="25">
                         <RadioButton VerticalAlignment="Center" 
                                      Name="originalProcLocation_PhysicalFile"
-                                     GroupName="originalProcLocation"
+                                     GroupName="originalProcLocation" 
+                                     Checked="ReloadContextFromGUI"
                                      >A Physical File...</RadioButton>
                         <Label VerticalAlignment="Center" Margin="15,0,15,0"
                                Name="originalProcLocation_PhysicalFile_Name"
@@ -83,55 +86,62 @@
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
-            <ListView Name="spParameters" HorizontalAlignment="Stretch">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Width="200" Header="Name"
-                                        DisplayMemberBinding="{Binding Name}"
-                                        />
-                        <GridViewColumn Width="100" Header="Type"
-                                        DisplayMemberBinding="{Binding Type}"
-                                        />
-                        <GridViewColumn Header="Value" Width="486">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Margin="0,0,0,5">
-                                        <StackPanel Orientation="Horizontal">
-                                            <RadioButton GroupName="{Binding Name}"
-                                                         Name="paramNameSource_ConstantValue"
-                                                         Width="150"
-                                                         >Constant Value</RadioButton>
-                                            <TextBox Width="400"
-                                                IsEnabled="{Binding ElementName=paramNameSource_ConstantValue, Path=IsChecked}"
-                                                ></TextBox>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <RadioButton GroupName="{Binding Name}"
-                                                         Name="paramNameSource_CSV"
-                                                         Width="150"
-                                                         >Comma Seperated List</RadioButton>
-                                            <TextBox
-                                                Width="400"
-                                                IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"
-                                                ></TextBox>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <RadioButton GroupName="{Binding Name}"
-                                                         Name="paramNameSource_QueryResults"
-                                                         Width="150"
-                                                         >Result of Query</RadioButton>
-                                            <TextBlock
-                                                Width="400"
-                                                IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
-                                                ></TextBlock>
-                                        </StackPanel>
+            <ItemsControl Name="spParameters" 
+                          HorizontalAlignment="Stretch" Margin="0,15,0,0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="0,1,0,0" BorderBrush="Gray">
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                <Label Width="200"
+                                    Content="{Binding Name}"
+                                    />
+                                <Label Width="100"
+                                    Content="{Binding Type}"
+                                    />
+                                <StackPanel Margin="0,0,0,5" Width="486">
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton GroupName="{Binding Name}"
+                                                 Name="paramNameSource_ConstantValue"
+                                                 Width="150"
+                                                 Checked="ReloadContextFromGUI"
+                                                 >Constant Value</RadioButton>
+                                        <TextBox Width="400"
+                                             Tag="{Binding Name}"
+                                             KeyUp="paramNameSource_ConstantValue_KeyUp"
+                                             IsEnabled="{Binding ElementName=paramNameSource_ConstantValue, Path=IsChecked}"
+                                            ></TextBox>
                                     </StackPanel>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton GroupName="{Binding Name}"
+                                                 Name="paramNameSource_CSV"
+                                                 Width="150"
+                                                 Checked="ReloadContextFromGUI"
+                                                 IsEnabled="false"
+                                                 >Comma Seperated List</RadioButton>
+                                        <TextBox Width="400"
+                                             IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"
+                                             ></TextBox>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton GroupName="{Binding Name}"
+                                                 Name="paramNameSource_QueryResults"
+                                                 Width="150"
+                                                 Checked="ReloadContextFromGUI"
+                                                 IsEnabled="false"
+                                                 >Result of Query</RadioButton>
+                                        <TextBlock Width="400"
+                                               IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                               ></TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Margin="0,25,0,0" Width="150" HorizontalAlignment="Right"
+                    IsEnabled="{Binding CurentContext.IsValidContext,ElementName=MainWin}"
+                    >Run The Tests!</Button>
         </StackPanel>
     </Grid>
 </Window>
