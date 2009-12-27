@@ -28,6 +28,7 @@ namespace Sprocket
         private SQLParamTestType _testType;
         public SQLParamTestType TestType
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _testType; }
             set
             {
@@ -42,6 +43,7 @@ namespace Sprocket
         private string _constantValue;
         public string ConstantValue
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _constantValue; }
             set
             {
@@ -55,6 +57,7 @@ namespace Sprocket
         private string _csv;
         public string CSV
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _csv; }
             set
             {
@@ -68,6 +71,7 @@ namespace Sprocket
         private string _query;
         public string Query
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _query; }
             set
             {
@@ -77,24 +81,35 @@ namespace Sprocket
         }
         #endregion
 
+        public int QueryCombinations
+        {
+            get
+            {
+                if (this.TestType == SQLParamTestType.ConstantValue)
+                    return 1;
+                else if (this.TestType == SQLParamTestType.CSV)
+                    return this.CSV.CountOf(',');
+                else
+                    throw new WTFException();
+            }
+        }
+
         public bool IsValidTestValue
         {
             get
             {
+                bool testTypeValid = false;
+                if (this.TestType == SQLParamTestType.ConstantValue)
+                    testTypeValid = !this.ConstantValue.IsNullOrEmpty();
+                else if (this.TestType == SQLParamTestType.CSV)
+                    testTypeValid = !string.IsNullOrEmpty(this.CSV);
+                else
+                    throw new WTFException();
+
                 return
-                    !string.IsNullOrEmpty(this.Parameter.Name) &&
+                    !this.Parameter.Name.IsNullOrEmpty() &&
                     this.TestType != SQLParamTestType.Unset &&
-                    (
-                        (
-                            this.TestType == SQLParamTestType.ConstantValue &&
-                            !string.IsNullOrEmpty(this.ConstantValue)
-                        )
-                        ||
-                        (
-                            this.TestType == SQLParamTestType.CSV &&
-                            !string.IsNullOrEmpty(this.CSV)
-                        )
-                    );
+                    testTypeValid;
             }
         }
 

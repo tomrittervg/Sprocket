@@ -14,6 +14,8 @@ namespace Sprocket
     public partial class MainWindow : Window
     {
         public TestContext CurentContext { get; set; }
+        public static Random rndm = new Random();
+        public static System.Diagnostics.Process CurrentProcess = System.Diagnostics.Process.GetCurrentProcess();
 
         public MainWindow()
         {
@@ -21,25 +23,6 @@ namespace Sprocket
             InitializeComponent();
 
             AssertNoDesignChanges();
-        }
-
-        private void loadProc(object sender, RoutedEventArgs e)
-        {
-            NoSPLoadedRow.Height = new GridLength(0);
-            SPLoadedRow.Height = new GridLength(0);
-
-            try
-            {
-                var data = SQL.Queries.GetStoredProcParameters(serverName.Text, database.Text, procName.Text);
-                spParameters.ItemsSource = data;
-                CurentContext.LoadParameters(data);
-                SPLoadedRow.Height = new GridLength();
-            }
-            catch (SqlException ex)
-            {
-                noParamsStatusMessage.Content = "Procedure Load Failed: \n" + ex.Message;
-                NoSPLoadedRow.Height = new GridLength();
-            }
         }
 
         private void originalProcLocation_PhysicalFile_Button_Click(object sender, RoutedEventArgs e)
@@ -87,5 +70,9 @@ namespace Sprocket
             CurentContext.ParameterValues.Find(x => x.Parameter.Name == txtBox.Tag.ToString()).ConstantValue = txtBox.Text;
         }
 
+        private void MainWin_Closed(object sender, EventArgs e)
+        {
+            //delete all stored procs that start with "sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString()
+        }
     }
 }

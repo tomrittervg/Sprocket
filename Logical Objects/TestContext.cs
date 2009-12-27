@@ -25,6 +25,7 @@ namespace Sprocket
         private string _server;
         public string Server
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _server; }
             set
             {
@@ -38,6 +39,7 @@ namespace Sprocket
         private string _database;
         public string Database
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _database; }
             set
             {
@@ -52,6 +54,7 @@ namespace Sprocket
         public string _storedProcedure { get; set; }
         public string StoredProcedure
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _storedProcedure; }
             set
             {
@@ -66,6 +69,7 @@ namespace Sprocket
         public OriginalProcLocations _originalProcLocation { get; set; }
         public OriginalProcLocations OriginalProcLocation
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _originalProcLocation; }
             set
             {
@@ -80,6 +84,7 @@ namespace Sprocket
         public string _originalProcFilename { get; set; }
         public string OriginalProcFilename
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _originalProcFilename; }
             set
             {
@@ -93,6 +98,7 @@ namespace Sprocket
         public string _comparisonProc { get; set; }
         public string ComparisonProc
         {
+            [System.Diagnostics.DebuggerStepThrough]
             get { return _comparisonProc; }
             set
             {
@@ -105,31 +111,7 @@ namespace Sprocket
 
         public List<SQLParamTestValues> ParameterValues { get; protected set; }
 
-        public bool IsValidContext
-        {
-            get
-            {
-                return
-                    this.OriginalProcLocation != OriginalProcLocations.Unset &&
-                    !string.IsNullOrEmpty(this.Server) &&
-                    !string.IsNullOrEmpty(this.Database) &&
-                    !string.IsNullOrEmpty(this.StoredProcedure) &&
-                    (
-                        (
-                            this.OriginalProcLocation == OriginalProcLocations.PhysicalFile &&
-                            !string.IsNullOrEmpty(this.OriginalProcFilename)
-                        )
-                        ||
-                        (
-                            this.OriginalProcLocation == OriginalProcLocations.AnotherProc &&
-                            !string.IsNullOrEmpty(this.ComparisonProc)
-                        )
-                    ) &&
-                    ParameterValues != null &&
-                    ParameterValues.All(x => x.IsValidTestValue);
-            }
-        }
-
+        //==================================================================================================================
         public void LoadParameters(List<SQLParam> data)
         {
             ParameterValues = new List<SQLParamTestValues>(data.Count);
@@ -140,6 +122,61 @@ namespace Sprocket
             }
         }
 
+        public void RunTests()
+        {
+            this.SetUpOriginalProc();
+        }
+        //==================================================================================================================
+
+        public bool IsValidContext
+        {
+            get
+            {
+                bool originalProcValid = false;
+
+                if (OriginalProcLocation == OriginalProcLocations.Unset)
+                    originalProcValid = false;
+                else if (OriginalProcLocation == OriginalProcLocations.AnotherProc)
+                    originalProcValid = !this.ComparisonProc.IsNullOrEmpty();
+                else if (OriginalProcLocation == OriginalProcLocations.PhysicalFile)
+                    originalProcValid = this.OriginalProcFilename.IsNullOrEmpty();
+                else
+                    throw new WTFException();
+
+                return
+                    !this.Server.IsNullOrEmpty() &&
+                    !this.Database.IsNullOrEmpty() &&
+                    !this.StoredProcedure.IsNullOrEmpty() &&
+                    originalProcValid &&
+                    ParameterValues != null &&
+                    ParameterValues.All(x => x.IsValidTestValue);
+            }
+        }
+
+        //==================================================================================================================
+        private void SetUpOriginalProc()
+        {
+            if (OriginalProcLocation == OriginalProcLocations.PhysicalFile)
+            {
+                var newName = SQL.Queries.TurnFileIntoProcedure(this.OriginalProcFilename, this.Server, this.Database);
+                var newProcParams = SQL.Queries.GetStoredProcParameters(this.Server, this.Database, newName);
+
+                if (!this.ParameterValues.ParametersMatch(newProcParams))
+                    throw new Exception("Proc Parameters Don't Match");
+
+                this.ComparisonProc = newName;
+            }
+            else if (OriginalProcLocation == OriginalProcLocations.AnotherProc)
+            {
+                var newProcParams = SQL.Queries.GetStoredProcParameters(this.Server, this.Database, this.ComparisonProc);
+
+                if (!this.ParameterValues.ParametersMatch(newProcParams))
+                    throw new Exception("Proc Parameters Don't Match");
+            }
+            else
+                throw new WTFException();
+        }
+        //==================================================================================================================
         #region INotifyPropertyChanged Stuff
         private void SQLParameterPropertyChanged(object sender, PropertyChangedEventArgs e)
         {

@@ -69,10 +69,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asserts.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Logical Objects\SQLParam.cs" />
     <Compile Include="Logical Objects\SQLParamTestValues.cs" />
     <Compile Include="Logical Objects\TestContext.cs" />
+    <Compile Include="Logical Objects\TestRunner.cs" />
     <Compile Include="Logical Objects\WTFException.cs" />
+    <Compile Include="MainWindow_LogicalActions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

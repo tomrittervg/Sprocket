@@ -1,4 +1,9 @@
 
 *.suo
+*.vsmdi
+*.testrunconfig
 /obj
 /bin
+/Tests/obj
+/Tests/bin
+/TestResults
