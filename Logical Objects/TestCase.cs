@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Sprocket
 {
+    /// <summary>A Set of SQL Parameters, with a single value for each</summary>
     public class TestCase
     {
         private Dictionary<string, string> values;
@@ -25,6 +26,7 @@ namespace Sprocket
 
         public List<SQLParam> Parameters { get; protected set; }
 
+        /// <summary>Gets the value for a parameter, surroounded with quotes if necessary</summary>
         public string GetEscapedValue(SQLParam key)
         {
             var val = values[key.Name];
@@ -33,6 +35,17 @@ namespace Sprocket
                 return "'" + val + "'";
             else
                 return val;
+        }
+
+        /// <summary>Returns a parameter string for SP Execution.</summary>
+        /// <example>@companyid=4,@name='tom'</example>
+        public string GetParameterString()
+        {
+            var paramString = "";
+            foreach (var p in this.Parameters)
+                paramString += " " + p.Name + "=" + this.GetEscapedValue(p) + ",";
+            paramString = paramString.TrimEnd(',');
+            return paramString;
         }
     }
 }

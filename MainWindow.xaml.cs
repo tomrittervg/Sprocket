@@ -26,6 +26,7 @@ namespace Sprocket
 
         private void originalProcLocation_PhysicalFile_Button_Click(object sender, RoutedEventArgs e)
         {
+            //TODO: DefaultExt isn't working, and this dialog could be improved.
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.DefaultExt = ".sql";
 
@@ -39,6 +40,7 @@ namespace Sprocket
 
         private void ReloadContextFromGUI(object sender, RoutedEventArgs e)
         {
+            //TODO: This function could be improved somehow to not reload everythign when only one thing is changed... I think
             CurentContext.Server = serverName.Text;
             CurentContext.Database = database.Text;
             CurentContext.StoredProcedure = procName.Text;
@@ -53,8 +55,8 @@ namespace Sprocket
                 {
                     SQLParamTestType testtype;
 
-                    if (radio.Name == "paramNameSource_QueryResults") testtype = SQLParamTestType.Query;
-                    else if (radio.Name == "paramNameSource_CSV") testtype = SQLParamTestType.CSV;
+                    if (radio.Name == "paramNameSource_CSV") testtype = SQLParamTestType.CSV;
+                    //else if (radio.Name == "paramNameSource_QueryResults") testtype = SQLParamTestType.Query;
                     else throw new WTFException();
 
                     CurentContext.ParameterValues.Find(x => x.Parameter.Name == radio.GroupName).TestType = testtype;

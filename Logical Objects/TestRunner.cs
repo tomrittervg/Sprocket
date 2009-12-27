@@ -31,7 +31,8 @@ namespace Sprocket
             }
             else
             {
-                int testsPerFile = this.GetNumTestsPerFile();
+                //TODO: Splitting Tests Across Files
+                throw new WTFException("This number of tests isn't supported yet");
             }
         }
 
@@ -64,6 +65,8 @@ namespace Sprocket
         }
         private ComparisonPair WriteTestCasesToFile(int offset, int limit)
         {
+            if (offset != 0 || limit != -1) throw new WTFException("Splitting Tests Across Files isn't really implemented yet...");
+
             string filenameOld = "", filenameNew = "";
 
             var root = Path.GetTempFileName().ReplaceLast(".tmp", "");
@@ -85,13 +88,11 @@ namespace Sprocket
                 if (i < offset) continue;
                 if (i > limit && limit > 0) break;
 
-                var paramString = "";
-                foreach (var p in testCases[i].Parameters)
-                    paramString += " " + p.Name + "=" + testCases[i].GetEscapedValue(p) + ",";
-                paramString = paramString.TrimEnd(',');
+                var paramString = testCases[i].GetParameterString();
+                var paramStringEscaped = paramString.Replace("'", "''");
 
-                oldHndl.WriteLine("print '" + paramString.Replace("'", "''") + "'");
-                newHndl.WriteLine("print '" + paramString.Replace("'", "''") + "'");
+                oldHndl.WriteLine("print '" + paramStringEscaped + "'");
+                newHndl.WriteLine("print '" + paramStringEscaped + "'");
 
                 oldHndl.WriteLine(string.Format("exec {0} {1}", Context.ComparisonProc, paramString));
                 newHndl.WriteLine(string.Format("exec {0} {1}", Context.StoredProcedure, paramString));
@@ -105,6 +106,8 @@ namespace Sprocket
         /// <summary>We need to split the number of proc executions per file, otherwise the files will be too large for merge programs to easily diff them</summary>
         private int GetNumTestsPerFile()
         {
+            //TODO: Run a random sample of procs and guess the size of each test case.  Then see how many test cases we can fit in a 1 or 2 meg file, and only
+            //  put that many test cases per fileset
             return 1000;
         }
     }

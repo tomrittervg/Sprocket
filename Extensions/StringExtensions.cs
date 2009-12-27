@@ -12,19 +12,27 @@ namespace Sprocket
             return string.IsNullOrEmpty(s);
         }
 
-        public static string ReplaceFirst(this string s, string searchFor, string replaceWith)
+        /// <param name="s">The string you are operating on</param>
+        /// <param name="needle">The string you want to replace</param>
+        /// <param name="replacement">What you want to replace it with</param>
+        /// <returns>The same string, if the needle was not found, otherwise the string with the first occurrence of <paramref name="needle"/> replaced with <paramref name="replacement"/>,but no other occurrences.</returns>
+        public static string ReplaceFirst(this string s, string needle, string replacement)
         {
-            int startIndex = s.IndexOf(searchFor);
+            int startIndex = s.IndexOf(needle);
             if (startIndex < 0) return s;
 
-            return s.Substring(0, startIndex) + replaceWith + s.Substring(startIndex + searchFor.Length);
+            return s.Substring(0, startIndex) + replacement + s.Substring(startIndex + needle.Length);
         }
-        public static string ReplaceLast(this string s, string searchFor, string replaceWith)
+        /// <param name="s">The string you are operating on</param>
+        /// <param name="needle">The string you want to replace</param>
+        /// <param name="replacement">What you want to replace it with</param>
+        /// <returns>The same string, if the needle was not found, otherwise the string with the last occurrence of <paramref name="needle"/> replaced with <paramref name="replacement"/>,but no other occurrences.</returns>
+        public static string ReplaceLast(this string s, string needle, string replacement)
         {
-            int startIndex = s.LastIndexOf(searchFor);
+            int startIndex = s.LastIndexOf(needle);
             if (startIndex < 0) return s;
 
-            return s.Substring(0, startIndex) + replaceWith + s.Substring(startIndex + searchFor.Length);
+            return s.Substring(0, startIndex) + replacement + s.Substring(startIndex + needle.Length);
         }
 
         public static int CountOf(this string s, char searchFor)

@@ -7,6 +7,7 @@ namespace Sprocket
 {
     public static class ListExtensions
     {
+        /// <summary>True if the Parameters in testValues match paramList exactly, False otherwise</summary>
         public static bool ParametersMatch(this List<SQLParamTestValues> testValues, List<SQLParam> paramList)
         {
             for (int i = 0; i < paramList.Count; i++)
@@ -15,6 +16,7 @@ namespace Sprocket
             return paramList.Count == testValues.Count;
         }
 
+        /// <summary>The Count of query combinations from the given test values</summary>
         public static int QueryCombinations(this List<SQLParamTestValues> testValues)
         {
             return testValues.Aggregate<SQLParamTestValues, int, int>(1, (a, x) => a * x.QueryCombinations, x => x);

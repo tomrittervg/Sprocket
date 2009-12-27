@@ -8,6 +8,5 @@ namespace Sprocket.DiffEngine
     public interface IDiffEngine
     {
         void ShowDiffWindowFiles(ComparisonPair compareFiles);
-        void ShowDiffWindowStrings(ComparisonPair compareStrings);
     }
 }

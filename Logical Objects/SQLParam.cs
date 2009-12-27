@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Sprocket
 {
+    /// <summary>A SQL Parameter - A Name and Type</summary>
     public struct SQLParam
     {
         public string Name { get; set; }

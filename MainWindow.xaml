@@ -40,7 +40,8 @@
                  >simpletestproc_prc</TextBox>
 
         <Button Grid.Column="1" Grid.Row="3"
-                Width="150" HorizontalAlignment="Right" Click="loadProc"
+                Width="150" HorizontalAlignment="Right" 
+                Click="LoadProcedure"
                 >Load Stored Procedure</Button>
 
         <StackPanel Grid.Column="0" Grid.ColumnSpan="2"

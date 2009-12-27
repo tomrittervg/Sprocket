@@ -6,6 +6,7 @@ using System.ComponentModel;
 
 namespace Sprocket
 {
+    /// <summary>Where the original Stored Procedure (before editing) we are testing is located</summary>
     public enum OriginalProcLocations
     {
         Unset = 0,
@@ -13,7 +14,7 @@ namespace Sprocket
         AnotherProc = 2
     }
 
-    [Serializable]
+    /// <summary>All the data necessary to run a regression test against a stored procedure</summary>
     public partial class TestContext : INotifyPropertyChanged
     {
         public TestContext()
@@ -52,6 +53,7 @@ namespace Sprocket
 
         #region Stored Procedure
         private string _storedProcedure { get; set; }
+        /// <summary>The Stored Procedure we are testing</summary>
         public string StoredProcedure
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -67,6 +69,7 @@ namespace Sprocket
 
         #region OriginalProcLocation
         private OriginalProcLocations _originalProcLocation { get; set; }
+        /// <summary>Where the original Stored Procedure (before editing) is located</summary>
         public OriginalProcLocations OriginalProcLocation
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -82,6 +85,7 @@ namespace Sprocket
 
         #region OriginalProcFilename
         private string _originalProcFilename { get; set; }
+        /// <summary>The filename of the Original Proc.  Used when OriginalProcLocation is set to PhysicalFile</summary>
         public string OriginalProcFilename
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -96,6 +100,7 @@ namespace Sprocket
         #endregion
         #region ComparisonProc
         private string _comparisonProc { get; set; }
+        /// <summary>The procedure we will compare StoredProcedure to</summary>
         public string ComparisonProc
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -109,6 +114,7 @@ namespace Sprocket
         }
         #endregion
 
+        /// <summary>The List of parameters to this stored procedure, and how they will be tested</summary>
         public List<SQLParamTestValues> ParameterValues { get; protected set; }
 
         //==================================================================================================================
@@ -130,7 +136,7 @@ namespace Sprocket
             runner.RunTests();
         }
         //==================================================================================================================
-
+        /// <summary>The number of test cases in this TestContext, based on the values of the parameters</summary>
         public int QueryCombinations
         {
             get
@@ -138,7 +144,7 @@ namespace Sprocket
                 return this.ParameterValues.QueryCombinations();
             }
         }
-
+        /// <summary>If the context is complete, and able to have its tests run</summary>
         public bool IsValidContext
         {
             get
@@ -169,6 +175,7 @@ namespace Sprocket
         {
             get
             {
+                if (!IsValidContext) throw new WTFException("Cannot request TestCases if you don't have a valid Context");
                 if (_testCases == null) 
                     _testCases = IronPython.GetTestCases(this.ParameterValues);
                 return _testCases;

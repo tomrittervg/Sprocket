@@ -76,7 +76,8 @@ namespace Sprocket.SQL
             }
             else
             {
-                throw new WTFException();
+                //TODO: What happens when the input file is invalid?
+                throw new WTFException("Your Input file could not be parsed by my Regex.");
             }
         }
     }

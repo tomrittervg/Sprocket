@@ -13,6 +13,7 @@ namespace Sprocket
         Query = 2
     }
 
+    /// <summary>A SQLParameter and all the values it will be tested with</summary>
     public class SQLParamTestValues : INotifyPropertyChanged
     {
         public SQLParamTestValues(SQLParam param)
@@ -47,7 +48,7 @@ namespace Sprocket
             set
             {
                 StoreCurrentTestValue();
-                _csv = value.Replace(",,", ",").TrimEnd(',');
+                _csv = value.Replace(",,", ",").TrimEnd(',', ' ').Trim();
                 ChangeProperty("CSV");
             }
         }
@@ -66,11 +67,13 @@ namespace Sprocket
         }
         #endregion
 
+        //==================================================================================================================
+
         public int QueryCombinations
         {
             get
             {
-if (this.TestType == SQLParamTestType.CSV)
+                if (this.TestType == SQLParamTestType.CSV)
                     return this.CSV.CountOf(',') + 1;
                 else
                     throw new WTFException();
@@ -94,6 +97,8 @@ if (this.TestType == SQLParamTestType.CSV)
                     testTypeValid;
             }
         }
+
+        //==================================================================================================================
 
         private List<string> _testValues;
         public List<string> TestValues
@@ -120,6 +125,8 @@ if (this.TestType == SQLParamTestType.CSV)
             else
                 throw new WTFException();
         }
+
+        //==================================================================================================================
 
         #region INotifyPropertyChanged Stuff
         private void StoreCurrentTestValue()

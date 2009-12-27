@@ -9,8 +9,9 @@ namespace Sprocket
 {
     public partial class MainWindow : Window
     {
-        private void loadProc(object sender, RoutedEventArgs e)
+        private void LoadProcedure(object sender, RoutedEventArgs e)
         {
+            //TODO: Is there really no better way of show/hiding rows than by futzing with their height?
             NoSPLoadedRow.Height = new GridLength(0);
             SPLoadedRow.Height = new GridLength(0);
 
@@ -35,8 +36,8 @@ namespace Sprocket
 
         private void MainWin_Closed(object sender, EventArgs e)
         {
-            //delete all stored procs that start with "sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString()
-            //delete all TemporaryFilesCreated
+            //TODO: Delete all stored procs that start with "sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString()
+            //TODO: Delete all TemporaryFilesCreated
         }
     }
 }
