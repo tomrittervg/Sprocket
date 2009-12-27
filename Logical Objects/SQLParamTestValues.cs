@@ -99,7 +99,9 @@ namespace Sprocket
             get
             {
                 bool testTypeValid = false;
-                if (this.TestType == SQLParamTestType.ConstantValue)
+                if (this.TestType == SQLParamTestType.Unset)
+                    testTypeValid = false;
+                else if (this.TestType == SQLParamTestType.ConstantValue)
                     testTypeValid = !this.ConstantValue.IsNullOrEmpty();
                 else if (this.TestType == SQLParamTestType.CSV)
                     testTypeValid = !string.IsNullOrEmpty(this.CSV);
@@ -108,7 +110,6 @@ namespace Sprocket
 
                 return
                     !this.Parameter.Name.IsNullOrEmpty() &&
-                    this.TestType != SQLParamTestType.Unset &&
                     testTypeValid;
             }
         }

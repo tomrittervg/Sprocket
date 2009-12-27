@@ -47,8 +47,8 @@ namespace Sprocket.SQL
             var result = cmd.ExecuteNonQuery();
             conn.Close();
         }
-        
-        private static Regex ProcParsingRegex = new Regex("\\s*(create|alter)\\s+procedure|proc\\s+(\\w+)\\s*\\(?\\s*@", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+
+        private static Regex ProcParsingRegex = new Regex("\\s*(?<procmode>create|alter)\\s+(procedure|proc)\\s+(?<procname>\\w+)\\s*\\(?\\s*@", RegexOptions.IgnoreCase | RegexOptions.Singleline);
         private static Regex ProcCleaningRegex = new Regex("\\s*--.+$", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Multiline);
         public static string TurnFileIntoProcedure(string filename, string server, string database)
         {
@@ -59,16 +59,16 @@ namespace Sprocket.SQL
 
             if (matchResults.Success)
             {
-                var createOrAlter = matchResults.Groups[0];
+                var createOrAlter = matchResults.Groups["procmode"];
                 if (createOrAlter.Value.ToLower() == "alter")
-                    procText.ReplaceFirst(createOrAlter.Value, "create");
+                    procText = procText.ReplaceFirst(createOrAlter.Value, "create");
 
-                var name = matchResults.Groups[1];
+                var name = matchResults.Groups["procname"];
                 var newName = "sprockettestrun" + "_" + 
                     (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString() + "_" +
                     MainWindow.rndm.Next(9999).ToString() + "_" + 
-                    name;
-                procText.ReplaceFirst(matchResults.Groups[1].Value, newName);
+                    name.Value;
+                procText = procText.ReplaceFirst(name.Value, newName);
 
                 CreateStoredProcedure(procText, server, database);
 

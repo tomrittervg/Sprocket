@@ -125,6 +125,8 @@ namespace Sprocket
         public void RunTests()
         {
             this.SetUpOriginalProc();
+
+            var runner = new TestRunner(this);
         }
         //==================================================================================================================
 
@@ -139,7 +141,7 @@ namespace Sprocket
                 else if (OriginalProcLocation == OriginalProcLocations.AnotherProc)
                     originalProcValid = !this.ComparisonProc.IsNullOrEmpty();
                 else if (OriginalProcLocation == OriginalProcLocations.PhysicalFile)
-                    originalProcValid = this.OriginalProcFilename.IsNullOrEmpty();
+                    originalProcValid = !this.OriginalProcFilename.IsNullOrEmpty();
                 else
                     throw new WTFException();
 
