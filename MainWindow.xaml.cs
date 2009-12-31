@@ -22,6 +22,7 @@ namespace Sprocket
         {
             CurentContext = new TestContext();
             InitializeComponent();
+            DisableWaitStatus();
         }
 
         private void originalProcLocation_PhysicalFile_Button_Click(object sender, RoutedEventArgs e)
@@ -73,6 +74,20 @@ namespace Sprocket
                 paramTestValue.CSV = txtBox.Text;
             else
                 throw new WTFException();
+        }
+
+        public void EnableWaitStatus(string message)
+        {
+            statusContainer.Visibility = Visibility.Visible;
+            greyRectangle.Visibility = Visibility.Visible;
+            statusLabel.Content = message;
+            mainLayoutGrid.IsEnabled = false;
+        }
+        public void DisableWaitStatus()
+        {
+            statusContainer.Visibility = Visibility.Hidden;
+            greyRectangle.Visibility = Visibility.Hidden;
+            mainLayoutGrid.IsEnabled = true;
         }
     }
 }

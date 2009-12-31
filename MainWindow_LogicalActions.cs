@@ -32,6 +32,7 @@ namespace Sprocket
 
         private void RunTests(object sender, RoutedEventArgs e)
         {
+            //this.EnableWaitStatus();
             CurentContext.RunTests();
         }
 
