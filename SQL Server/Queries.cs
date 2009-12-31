@@ -26,14 +26,40 @@ namespace Sprocket.SQL
 
             conn.Open();
             var results = cmd.ExecuteReader();
-            
+
             List<SQLParam> paramList = new List<SQLParam>(5);
             while (results.Read())
                 paramList.Add(new SQLParam(results["name"].ToString(), results["type"].ToString()));
-            
+
             conn.Close();
 
             return paramList;
+        }
+
+        public static void DeleteProcsBeginningWith(string beginsWith, string serverName, string database)
+        {
+            if (beginsWith.IsNullOrEmpty()) throw new WTFException();
+
+            var conn = Connections.GetConnection(serverName, database);
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = @"SELECT sp.name as name
+                                FROM sys.procedures sp with (nolock) 
+                                WHERE sp.name LIKE @procName + '%'";
+            cmd.Parameters.AddWithValue("@procName", beginsWith);
+
+            conn.Open();
+            var results = cmd.ExecuteReader();
+
+            StringBuilder sb = new StringBuilder();
+            while (results.Read())
+                sb.Append("DELETE PROCEDURE ").Append(results["name"]).Append(";");
+
+            cmd = conn.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = sb.ToString();
+
+            conn.Close();
         }
 
         public static void CreateStoredProcedure(string procText, string server, string database)

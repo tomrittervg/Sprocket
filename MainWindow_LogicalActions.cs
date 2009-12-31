@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,8 +37,11 @@ namespace Sprocket
 
         private void MainWin_Closed(object sender, EventArgs e)
         {
-            //TODO: Delete all stored procs that start with "sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString()
-            //TODO: Delete all TemporaryFilesCreated
+            //TODO: Track server and database changes, because this will leave messes behind if you change servers and databases.
+            SQL.Queries.DeleteProcsBeginningWith("sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString(),
+                CurentContext.Server, CurentContext.Database);
+            for (int i = 0; i < TemporaryFilesCreated.Count; i++)
+                File.Delete(TemporaryFilesCreated[i]);
         }
     }
 }
