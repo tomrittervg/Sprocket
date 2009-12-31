@@ -32,8 +32,10 @@ namespace Sprocket
 
         private void RunTests(object sender, RoutedEventArgs e)
         {
-            //this.EnableWaitStatus();
-            CurentContext.RunTests();
+            System.Threading.ThreadPool.QueueUserWorkItem(delegate(object data)
+            {
+                CurentContext.RunTests();
+            });
         }
 
         private void MainWin_Closed(object sender, EventArgs e)

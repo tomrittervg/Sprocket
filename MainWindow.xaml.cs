@@ -21,6 +21,21 @@ namespace Sprocket
         public MainWindow()
         {
             CurentContext = new TestContext();
+            TestRunner.enableWaitStatus = delegate(string msg)
+            {
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    this.EnableWaitStatus(msg);
+                }));
+            };
+            TestRunner.disableWaitStatus = delegate()
+            {
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    this.DisableWaitStatus();
+                }));
+            };
+
             InitializeComponent();
             DisableWaitStatus();
         }

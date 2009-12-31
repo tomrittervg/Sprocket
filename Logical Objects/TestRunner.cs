@@ -9,6 +9,10 @@ namespace Sprocket
 {
     public class TestRunner
     {
+        public static Action<string> enableWaitStatus;
+        public static Action disableWaitStatus;
+
+
         private const int cTrivialNumberOfTestsLimit = 100;
         private int? _numTests;
         private DiffEngine.IDiffEngine _diffEngine;
@@ -22,11 +26,15 @@ namespace Sprocket
 
         public void RunTests()
         {
+            TestRunner.enableWaitStatus("Beginning Tests");
+
             _numTests = Context.QueryCombinations;
             if (_numTests < cTrivialNumberOfTestsLimit)
             {
                 var filesToRun = this.WriteTestCasesToFile();
+                TestRunner.enableWaitStatus("Running Test Cases");
                 var fileResults = this.RunTestCases(filesToRun);
+                TestRunner.enableWaitStatus("Displaying Differences");
                 _diffEngine.ShowDiffWindowFiles(fileResults);
             }
             else
@@ -34,6 +42,8 @@ namespace Sprocket
                 //TODO: Splitting Tests Across Files
                 throw new WTFException("This number of tests isn't supported yet");
             }
+            
+            TestRunner.disableWaitStatus();
         }
 
         private ComparisonPair RunTestCases(ComparisonPair runset)
