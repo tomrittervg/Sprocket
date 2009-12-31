@@ -53,11 +53,13 @@ namespace Sprocket.SQL
 
             StringBuilder sb = new StringBuilder();
             while (results.Read())
-                sb.Append("DELETE PROCEDURE ").Append(results["name"]).Append(";");
+                sb.Append("DROP PROCEDURE ").Append(results["name"]).Append(";");
+            results.Close();
 
             cmd = conn.CreateCommand();
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = sb.ToString();
+                cmd.ExecuteNonQuery();
 
             conn.Close();
         }

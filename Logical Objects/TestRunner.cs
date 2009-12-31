@@ -43,7 +43,7 @@ namespace Sprocket
             string oldArguments = string.Format("-S {0} -E -i \"{1}\" -o \"{2}\"", Context.Server, runset.Old, results.Old);
             string newArguments = string.Format("-S {0} -E -i \"{1}\" -o \"{2}\"", Context.Server, runset.New, results.New);
 
-            
+
             ProcessStartInfo startInfo = new ProcessStartInfo("sqlcmd", oldArguments) { UseShellExecute = true };
             Process job = new Process() { StartInfo = startInfo };
             job.Start();
@@ -55,6 +55,9 @@ namespace Sprocket
             job.Start();
             job.WaitForExit();
             job.Close();
+
+            MainWindow.TemporaryFilesCreated.Add(results.Old);
+            MainWindow.TemporaryFilesCreated.Add(results.New);
 
             return results;
         }
@@ -69,7 +72,9 @@ namespace Sprocket
 
             string filenameOld = "", filenameNew = "";
 
-            var root = Path.GetTempFileName().ReplaceLast(".tmp", "");
+            var root = Path.GetTempFileName();
+            MainWindow.TemporaryFilesCreated.Add(root);
+            root = root.ReplaceLast(".tmp", "");
             filenameOld = root + ".old.txt";
             filenameNew = root + ".new.txt";
             MainWindow.TemporaryFilesCreated.Add(filenameOld);
