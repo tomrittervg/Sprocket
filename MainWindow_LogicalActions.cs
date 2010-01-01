@@ -38,6 +38,47 @@ namespace Sprocket
             });
         }
 
+        protected void ValidatePhysicalProcFile(object data)
+        {
+            try
+            {
+                var newName = SQL.Queries.TurnFileIntoProcedure(CurentContext.OriginalProcFilename, CurentContext.Server, CurentContext.Database);
+                var newProcParams = SQL.Queries.GetStoredProcParameters(CurentContext.Server, CurentContext.Database, newName);
+
+                if (!CurentContext.ParameterValues.ParametersMatch(newProcParams))
+                    throw new SpecificException(SpecificException.ProcParametersDontMatch);
+
+                CurentContext.ComparisonProc = newName;
+                CurentContext.ComparisonProcValid = true;
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    originalProcLocation_PhysicalFile_statusImage.Source = GoodBMP;
+                    originalProcLocation_PhysicalFile_statusImage.MouseUp -= new System.Windows.Input.MouseButtonEventHandler(displayErrorMessage);
+                }));
+            }
+            catch (SpecificException ex)
+            {
+                if (ex.Message.OneOf(SpecificException.ProcParametersDontMatch, SpecificException.InputCouldNotBeParsed))
+                {
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        originalProcLocation_PhysicalFile_statusImage.Source = BadBMP;
+                        originalProcLocation_PhysicalFile_statusImage.Tag = ex.Message;
+                        originalProcLocation_PhysicalFile_statusImage.MouseUp += new System.Windows.Input.MouseButtonEventHandler(displayErrorMessage);
+                    }));
+                    CurentContext.ComparisonProc = string.Empty;
+                    CurentContext.ComparisonProcValid = false;
+                }
+                else
+                    throw;
+            }
+        }
+
+        void displayErrorMessage(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MessageBox.Show((sender as FrameworkElement).Tag.ToString(), "Operation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         private void MainWin_Closed(object sender, EventArgs e)
         {
             //TODO: Track server and database changes, because this will leave messes behind if you change servers and databases.

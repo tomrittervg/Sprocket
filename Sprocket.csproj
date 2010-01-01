@@ -57,6 +57,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -65,9 +66,18 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -94,6 +104,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IronPython\TestContext.cs" />
     <Compile Include="Logical Objects\ComparisonPair.cs" />
+    <Compile Include="Logical Objects\SpecificException.cs" />
     <Compile Include="Logical Objects\SQLParam.cs" />
     <Compile Include="Logical Objects\SQLParamTestValues.cs" />
     <Compile Include="Logical Objects\TestCase.cs" />
@@ -101,6 +112,7 @@
     <Compile Include="Logical Objects\TestRunner.cs" />
     <Compile Include="Logical Objects\WTFException.cs" />
     <Compile Include="MainWindow_LogicalActions.cs" />
+    <Compile Include="MainWindow_UIExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -119,12 +131,25 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icon-packet\knobs\PNG\Knob Valid Green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icon-packet\knobs\PNG\Knob Cancel.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icon-packet\knobs\PNG\Knob Orange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

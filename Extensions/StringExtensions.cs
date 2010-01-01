@@ -43,5 +43,13 @@ namespace Sprocket
                     c++;
             return c;
         }
+
+        public static bool OneOf(this string s, params string[] possibilities)
+        {
+            for(int i=0;i<possibilities.Length;i++)
+                if(s == possibilities[i])
+                    return true;
+            return false;
+        }
     }
 }

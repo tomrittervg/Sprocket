@@ -90,7 +90,7 @@ namespace Tests
         {
             string s = "One Two Two Three";
             string r = s.ReplaceFirst("Two", "Ninja");
-            Assert.IsTrue(r == "One Two Ninja Three");
+            Assert.IsTrue(r == "One Ninja Two Three");
         }
         [TestMethod]
         public void StringExtensionTest13()
@@ -98,6 +98,31 @@ namespace Tests
             string s = "One Two Two Three";
             string r = s.ReplaceFirst("Three", "Ninja");
             Assert.IsTrue(r == "One Two Two Ninja");
+        }
+
+        [TestMethod]
+        public void StringExtensionTest14()
+        {
+            string s = "Hello";
+            Assert.IsTrue(s.OneOf("Mom", "DaD", "Hello", "Joe"));
+        }
+        [TestMethod]
+        public void StringExtensionTest15()
+        {
+            string s = "Hello";
+            Assert.IsFalse(s.OneOf("Mom", "DaD", "HeLLo", "Joe"));
+        }
+        [TestMethod]
+        public void StringExtensionTest16()
+        {
+            string s = "Hello";
+            Assert.IsTrue(s.OneOf("Hello", "Joe"));
+        }
+        [TestMethod]
+        public void StringExtensionTest17()
+        {
+            string s = "Hello";
+            Assert.IsFalse(s.OneOf("Mom", "DaD", "Joe"));
         }
     }
 }

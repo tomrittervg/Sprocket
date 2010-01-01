@@ -20,6 +20,7 @@ namespace Sprocket
         public TestContext()
         {
             OriginalProcLocation = OriginalProcLocations.Unset;
+            ComparisonProcValid = false;
         }
 
         #region Server
@@ -113,6 +114,21 @@ namespace Sprocket
             }
         }
         #endregion
+        #region ComparisonProcValid
+        private bool _comparisonProcValid { get; set; }
+        /// <summary>The procedure we will compare StoredProcedure to</summary>
+        public bool ComparisonProcValid
+        {
+            [System.Diagnostics.DebuggerStepThrough]
+            get { return _comparisonProcValid; }
+            set
+            {
+                StoreCurrentTestValue();
+                _comparisonProcValid = value;
+                ChangeProperty("ComparisonProcValid");
+            }
+        }
+        #endregion
 
         /// <summary>The List of parameters to this stored procedure, and how they will be tested</summary>
         public List<SQLParamTestValues> ParameterValues { get; protected set; }
@@ -130,8 +146,6 @@ namespace Sprocket
 
         public void RunTests()
         {
-            this.SetUpOriginalProc();
-
             var runner = new TestRunner(this);
             runner.RunTests();
         }
@@ -154,9 +168,9 @@ namespace Sprocket
                 if (OriginalProcLocation == OriginalProcLocations.Unset)
                     originalProcValid = false;
                 else if (OriginalProcLocation == OriginalProcLocations.AnotherProc)
-                    originalProcValid = !this.ComparisonProc.IsNullOrEmpty();
+                    originalProcValid = ComparisonProcValid;
                 else if (OriginalProcLocation == OriginalProcLocations.PhysicalFile)
-                    originalProcValid = !this.OriginalProcFilename.IsNullOrEmpty();
+                    originalProcValid = ComparisonProcValid;
                 else
                     throw new WTFException();
 
@@ -182,29 +196,6 @@ namespace Sprocket
             }
         }
 
-        //==================================================================================================================
-        private void SetUpOriginalProc()
-        {
-            if (OriginalProcLocation == OriginalProcLocations.PhysicalFile)
-            {
-                var newName = SQL.Queries.TurnFileIntoProcedure(this.OriginalProcFilename, this.Server, this.Database);
-                var newProcParams = SQL.Queries.GetStoredProcParameters(this.Server, this.Database, newName);
-
-                if (!this.ParameterValues.ParametersMatch(newProcParams))
-                    throw new Exception("Proc Parameters Don't Match");
-
-                this.ComparisonProc = newName;
-            }
-            else if (OriginalProcLocation == OriginalProcLocations.AnotherProc)
-            {
-                var newProcParams = SQL.Queries.GetStoredProcParameters(this.Server, this.Database, this.ComparisonProc);
-
-                if (!this.ParameterValues.ParametersMatch(newProcParams))
-                    throw new Exception("Proc Parameters Don't Match");
-            }
-            else
-                throw new WTFException();
-        }
         //==================================================================================================================
         #region INotifyPropertyChanged Stuff
         private void SQLParameterPropertyChanged(object sender, PropertyChangedEventArgs e)

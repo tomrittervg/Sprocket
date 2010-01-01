@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Data.SqlClient;
+using System.Threading;
 
 namespace Sprocket
 {
@@ -37,6 +38,7 @@ namespace Sprocket
             };
 
             InitializeComponent();
+            InitializeImageResources();
             DisableWaitStatus();
         }
 
@@ -52,6 +54,8 @@ namespace Sprocket
                 originalProcLocation_PhysicalFile_Name.Content = ofd.FileName;
                 CurentContext.OriginalProcFilename = ofd.FileName;
             }
+            originalProcLocation_PhysicalFile_statusImage.Source = WaitBMP;
+            ThreadPool.QueueUserWorkItem(ValidatePhysicalProcFile);
         }
 
         private void ReloadContextFromGUI(object sender, RoutedEventArgs e)
