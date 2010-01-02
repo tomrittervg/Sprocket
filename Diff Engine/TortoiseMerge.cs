@@ -16,7 +16,12 @@ namespace Sprocket.DiffEngine
             _binary = FindTortoiseBinary();
         }
 
-        public void ShowDiffWindowFiles(ComparisonPair compareFiles)
+        public void CompareFiles(ComparisonPair compareFiles)
+        {
+            ShowDiffWindowFiles(compareFiles);
+        }
+
+        private static void ShowDiffWindowFiles(ComparisonPair compareFiles)
         {
             //TODO: Multithread the shit out of this app, so stuff like this doesn't lock the main GUI like a newb
 

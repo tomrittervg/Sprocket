@@ -13,15 +13,53 @@ namespace Sprocket
 {
     public partial class MainWindow : Window
     {
-        protected const string icon_resource_bad = "Sprocket.icon_packet.knobs.PNG.Knob Cancel.png";
-        protected const string icon_resource_wait = "Sprocket.icon_packet.knobs.PNG.Knob Orange.png";
-        protected const string icon_resource_good = "Sprocket.icon_packet.knobs.PNG.Knob Valid Green.png";
+        public void EnableWaitStatus(string message)
+        {
+            statusContainer.Visibility = Visibility.Visible;
+            greyRectangle.Visibility = Visibility.Visible;
+            statusLabel.Content = message;
+            mainLayoutGrid.IsEnabled = false;
+        }
+        public void DisableWaitStatus()
+        {
+            statusContainer.Visibility = Visibility.Hidden;
+            greyRectangle.Visibility = Visibility.Hidden;
+            mainLayoutGrid.IsEnabled = true;
+        }
+
+        protected void displayErrorMessage(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            MessageBox.Show((sender as StatusImage).ErrorMessage, "Operation Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void MainWin_Closed(object sender, EventArgs e)
+        {
+            //TODO: Track server and database changes, because this will leave messes behind if you change servers and databases.
+            //As this is a cleanup, closing window function, we swallow any cleanup that could not be done, and try to continue.
+            try
+            {
+                SQL.Queries.DeleteProcsBeginningWith("sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString(),
+                    CurrentContext.Server, CurrentContext.Database);
+            }
+            catch (Exception ex) { }
+            try
+            {
+                for (int i = 0; i < TemporaryFilesCreated.Count; i++)
+                    File.Delete(TemporaryFilesCreated[i]);
+            }
+            catch (Exception ex) { }
+        }
+
+        #region Image Resources
+        private const string icon_resource_bad = "Sprocket.icon_packet.knobs.PNG.Knob Cancel.png";
+        private const string icon_resource_wait = "Sprocket.icon_packet.knobs.PNG.Knob Orange.png";
+        private const string icon_resource_good = "Sprocket.icon_packet.knobs.PNG.Knob Valid Green.png";
 
         protected static ImageSource BadBMP;
         protected static ImageSource GoodBMP;
         protected static ImageSource WaitBMP;
 
-        protected void InitializeImageResources()
+        private void InitializeImageResources()
         {
             using (var badStream = this.GetType().Assembly.GetManifestResourceStream(icon_resource_bad))
             {
@@ -39,5 +77,6 @@ namespace Sprocket
                 GoodBMP = bitmapDecoder.Frames[0];
             }
         }
+        #endregion
     }
 }

@@ -7,35 +7,34 @@ using System.Diagnostics;
 
 namespace Sprocket
 {
-    public class TestRunner
+    public static class TestRunner
     {
-        public static Action<string> enableWaitStatus;
-        public static Action disableWaitStatus;
-
+        public static Action<string> EnableWaitStatus;
+        public static Action DisableWaitStatus;
 
         private const int cTrivialNumberOfTestsLimit = 100;
-        private int? _numTests;
-        private DiffEngine.IDiffEngine _diffEngine;
+        private static DiffEngine.IDiffEngine _diffEngine;
 
-        private TestContext Context { get; set; }
-        public TestRunner(TestContext context)
+        
+        static TestRunner()
         {
             _diffEngine = new DiffEngine.TortoiseMerge();
-            Context = context;
         }
 
-        public void RunTests()
+        public static void RunTests(TestContext context)
         {
-            TestRunner.enableWaitStatus("Beginning Tests");
+            TestRunner.EnableWaitStatus("Beginning Tests");
 
-            _numTests = Context.QueryCombinations;
+            int? _numTests = context.QueryCombinations;
             if (_numTests < cTrivialNumberOfTestsLimit)
             {
-                var filesToRun = this.WriteTestCasesToFile();
-                TestRunner.enableWaitStatus("Running Test Cases");
-                var fileResults = this.RunTestCases(filesToRun);
-                TestRunner.enableWaitStatus("Displaying Differences");
-                _diffEngine.ShowDiffWindowFiles(fileResults);
+                var filesToRun = WriteTestCasesToFile(context);
+
+                TestRunner.EnableWaitStatus("Running Test Cases");
+                var fileResults = RunTestCases(filesToRun, context.Server);
+
+                TestRunner.EnableWaitStatus("Displaying Differences");
+                _diffEngine.CompareFiles(fileResults);
             }
             else
             {
@@ -43,16 +42,15 @@ namespace Sprocket
                 throw new WTFException("This number of tests isn't supported yet");
             }
             
-            TestRunner.disableWaitStatus();
+            TestRunner.DisableWaitStatus();
         }
 
-        private ComparisonPair RunTestCases(ComparisonPair runset)
+        private static ComparisonPair RunTestCases(ComparisonPair runset, string server)
         {
             var results = new ComparisonPair(runset.Old.ReplaceLast(".txt", ".results.txt"), runset.New.ReplaceLast(".txt", ".results.txt"));
 
-            string oldArguments = string.Format("-S {0} -E -i \"{1}\" -o \"{2}\"", Context.Server, runset.Old, results.Old);
-            string newArguments = string.Format("-S {0} -E -i \"{1}\" -o \"{2}\"", Context.Server, runset.New, results.New);
-
+            string oldArguments = string.Format("-S {0} -E -i \"{1}\" -o \"{2}\"", server, runset.Old, results.Old);
+            string newArguments = string.Format("-S {0} -E -i \"{1}\" -o \"{2}\"", server, runset.New, results.New);
 
             ProcessStartInfo startInfo = new ProcessStartInfo("sqlcmd", oldArguments) { UseShellExecute = true };
             Process job = new Process() { StartInfo = startInfo };
@@ -72,11 +70,11 @@ namespace Sprocket
             return results;
         }
 
-        private ComparisonPair WriteTestCasesToFile()
+        private static ComparisonPair WriteTestCasesToFile(TestContext context)
         {
-            return WriteTestCasesToFile(0, -1);
+            return WriteTestCasesToFile(context, 0, -1);
         }
-        private ComparisonPair WriteTestCasesToFile(int offset, int limit)
+        private static ComparisonPair WriteTestCasesToFile(TestContext context, int offset, int limit)
         {
             if (offset != 0 || limit != -1) throw new WTFException("Splitting Tests Across Files isn't really implemented yet...");
 
@@ -90,15 +88,14 @@ namespace Sprocket
             MainWindow.TemporaryFilesCreated.Add(filenameOld);
             MainWindow.TemporaryFilesCreated.Add(filenameNew);
 
-            var testCases = Context.TestCases;
-            if (testCases.Count != _numTests) throw new WTFException();
+            var testCases = context.TestCases;
 
             var oldHndl = new StreamWriter(filenameOld, false);
             var newHndl = new StreamWriter(filenameNew, false);
-            oldHndl.WriteLine("Use " + Context.Database + ";");
-            newHndl.WriteLine("Use " + Context.Database + ";");
+            oldHndl.WriteLine("Use " + context.Database + ";");
+            newHndl.WriteLine("Use " + context.Database + ";");
 
-            for (int i = 0; i < _numTests.Value; i++)
+            for (int i = 0; i < testCases.Count; i++)
             {
                 if (i < offset) continue;
                 if (i > limit && limit > 0) break;
@@ -109,8 +106,8 @@ namespace Sprocket
                 oldHndl.WriteLine("print '" + paramStringEscaped + "'");
                 newHndl.WriteLine("print '" + paramStringEscaped + "'");
 
-                oldHndl.WriteLine(string.Format("exec {0} {1}", Context.ComparisonProc, paramString));
-                newHndl.WriteLine(string.Format("exec {0} {1}", Context.StoredProcedure, paramString));
+                oldHndl.WriteLine(string.Format("exec {0} {1}", context.ComparisonProc, paramString));
+                newHndl.WriteLine(string.Format("exec {0} {1}", context.StoredProcedure, paramString));
             }
             oldHndl.Close();
             newHndl.Close();
@@ -119,7 +116,7 @@ namespace Sprocket
         }
 
         /// <summary>We need to split the number of proc executions per file, otherwise the files will be too large for merge programs to easily diff them</summary>
-        private int GetNumTestsPerFile()
+        private static int GetNumTestsPerFile()
         {
             //TODO: Run a random sample of procs and guess the size of each test case.  Then see how many test cases we can fit in a 1 or 2 meg file, and only
             //  put that many test cases per fileset

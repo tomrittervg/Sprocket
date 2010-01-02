@@ -14,22 +14,24 @@ namespace Sprocket
     /// </summary>
     public partial class MainWindow : Window
     {
-        public TestContext CurrentContext { get; set; }
         public static Random rndm = new Random();
         public static System.Diagnostics.Process CurrentProcess = System.Diagnostics.Process.GetCurrentProcess();
         public static List<string> TemporaryFilesCreated = new List<string>();
 
+        public TestContext CurrentContext { get; set; }
+        
+
         public MainWindow()
         {
             CurrentContext = new TestContext();
-            TestRunner.enableWaitStatus = delegate(string msg)
+            TestRunner.EnableWaitStatus = delegate(string msg)
             {
                 this.Dispatcher.Invoke((Action)(() =>
                 {
                     this.EnableWaitStatus(msg);
                 }));
             };
-            TestRunner.disableWaitStatus = delegate()
+            TestRunner.DisableWaitStatus = delegate()
             {
                 this.Dispatcher.Invoke((Action)(() =>
                 {
@@ -52,10 +54,14 @@ namespace Sprocket
             if (result == true)
             {
                 originalProcLocation_PhysicalFile_Name.Content = ofd.FileName;
-                CurrentContext.OriginalProcFilename = ofd.FileName;
+                
+                CurrentContext.ComparisonProcFilename = ofd.FileName;
+                CurrentContext.ComparisonProcValid = false;
+                
+                originalProcLocation_PhysicalFile_statusImage.Source = WaitBMP;
+                
+                ThreadPool.QueueUserWorkItem(ValidatePhysicalProcFile);
             }
-            originalProcLocation_PhysicalFile_statusImage.Source = WaitBMP;
-            ThreadPool.QueueUserWorkItem(ValidatePhysicalProcFile);
         }
 
         private void paramNameSource_QueryResults_editButton_Click(object sender, RoutedEventArgs e)
@@ -69,7 +75,7 @@ namespace Sprocket
 
         private void ReloadContextFromGUI(object sender, RoutedEventArgs e)
         {
-            //TODO: This function could be improved somehow to not reload everythign when only one thing is changed... I think
+            //TODO: This function could be improved somehow to not reload everything when only one thing is changed... I think
             CurrentContext.Server = serverName.Text;
             CurrentContext.Database = database.Text;
             CurrentContext.StoredProcedure = procName.Text;
@@ -93,30 +99,13 @@ namespace Sprocket
             }
         }
 
-        private void paramNameSource_TextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private void paramNameSource_CSV_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var txtBox = sender as TextBox;
             var paramTestValue = CurrentContext.ParameterValues.Find(x => x.Parameter.Name == txtBox.Tag.ToString());
 
-            if (txtBox.Name == "paramNameSource_CSV_value")
-                paramTestValue.CSV = txtBox.Text;
-            else
-                throw new WTFException();
+            if (txtBox.Name == "paramNameSource_CSV_value") paramTestValue.CSV = txtBox.Text;
+            else throw new WTFException();
         }
-
-        public void EnableWaitStatus(string message)
-        {
-            statusContainer.Visibility = Visibility.Visible;
-            greyRectangle.Visibility = Visibility.Visible;
-            statusLabel.Content = message;
-            mainLayoutGrid.IsEnabled = false;
-        }
-        public void DisableWaitStatus()
-        {
-            statusContainer.Visibility = Visibility.Hidden;
-            greyRectangle.Visibility = Visibility.Hidden;
-            mainLayoutGrid.IsEnabled = true;
-        }
-
     }
 }

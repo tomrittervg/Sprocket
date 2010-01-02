@@ -11,6 +11,8 @@ namespace Sprocket.SQL
 {
     public static class Queries
     {
+        //TODO: All Queries should be run in a background thread.  With a nonresponsive server the UI locks up.
+
         public static HashSet<string> GetCollapsedQueryResults(string serverName, string database, string query)
         {
             var conn = Connections.GetConnection(serverName, database);

@@ -15,11 +15,5 @@ namespace Sprocket
                     return false;
             return paramList.Count == testValues.Count;
         }
-
-        /// <summary>The Count of query combinations from the given test values</summary>
-        public static int QueryCombinations(this List<SQLParamTestValues> testValues)
-        {
-            return testValues.Aggregate<SQLParamTestValues, int, int>(1, (a, x) => a * x.QueryCombinations, x => x);
-        }
     }
 }

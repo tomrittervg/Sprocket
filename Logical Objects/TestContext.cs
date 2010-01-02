@@ -84,21 +84,22 @@ namespace Sprocket
         }
         #endregion
 
-        #region OriginalProcFilename
-        private string _originalProcFilename { get; set; }
-        /// <summary>The filename of the Original Proc.  Used when OriginalProcLocation is set to PhysicalFile</summary>
-        public string OriginalProcFilename
+        #region ComparisonProcFilename
+        private string _comparisonProcFilename { get; set; }
+        /// <summary>The filename of the Comparison Proc.  Used when OriginalProcLocation is set to PhysicalFile</summary>
+        public string ComparisonProcFilename
         {
             [System.Diagnostics.DebuggerStepThrough]
-            get { return _originalProcFilename; }
+            get { return _comparisonProcFilename; }
             set
             {
                 StoreCurrentTestValue();
-                _originalProcFilename = value;
-                ChangeProperty("OriginalProcFilename");
+                _comparisonProcFilename = value;
+                ChangeProperty("ComparisonProcFilename");
             }
         }
         #endregion
+
         #region ComparisonProc
         private string _comparisonProc { get; set; }
         /// <summary>The procedure we will compare StoredProcedure to</summary>
@@ -116,7 +117,7 @@ namespace Sprocket
         #endregion
         #region ComparisonProcValid
         private bool _comparisonProcValid { get; set; }
-        /// <summary>The procedure we will compare StoredProcedure to</summary>
+        /// <summary>Whether or not the Comparison Proc has matching parameters</summary>
         public bool ComparisonProcValid
         {
             [System.Diagnostics.DebuggerStepThrough]
@@ -146,8 +147,7 @@ namespace Sprocket
 
         public void RunTests()
         {
-            var runner = new TestRunner(this);
-            runner.RunTests();
+            TestRunner.RunTests(this);
         }
         //==================================================================================================================
         /// <summary>The number of test cases in this TestContext, based on the values of the parameters</summary>
@@ -155,7 +155,7 @@ namespace Sprocket
         {
             get
             {
-                return this.ParameterValues.QueryCombinations();
+                return this.ParameterValues.Aggregate<SQLParamTestValues, int, int>(1, (a, x) => a * x.QueryCombinations, x => x);
             }
         }
         /// <summary>If the context is complete, and able to have its tests run</summary>

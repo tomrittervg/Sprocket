@@ -48,11 +48,19 @@ namespace Sprocket
             set
             {
                 StoreCurrentTestValue();
+
                 _csv = value.Replace(",,", ",").TrimEnd(',', ' ').Trim();
+
+                _csvValues = new List<string>();
+                _csvValues.AddRange(_csv.Split(','));
+                _csvValues.ConvertAll<string>(x => x.Trim());
+
                 ChangeProperty("CSV");
             }
         }
         #endregion
+        private List<string> _csvValues { get; set; }
+
         #region Query
         private string _query;
         public string Query
@@ -61,13 +69,20 @@ namespace Sprocket
             get { return _query; }
             set
             {
-                StoreCurrentTestValue(); 
+                StoreCurrentTestValue();
                 _query = value;
                 ChangeProperty("Query");
             }
         }
         #endregion
         private List<string> _queryValues { get; set; }
+        public void SetQueryResults(List<string> results)
+        {
+            StoreCurrentTestValue();
+            if (TestType != SQLParamTestType.Query) throw new WTFException();
+            _queryValues = results;
+            ChangeProperty("TestValues");
+        }
 
         //==================================================================================================================
 
@@ -76,9 +91,9 @@ namespace Sprocket
             get
             {
                 if (this.TestType == SQLParamTestType.CSV)
-                    return this.CSV.CountOf(',') + 1;
+                    return this._csvValues.Count;
                 else if (this.TestType == SQLParamTestType.Query)
-                    return this._queryValues.Count();
+                    return this._queryValues.Count;
                 else
                     throw new WTFException();
             }
@@ -92,7 +107,7 @@ namespace Sprocket
                 if (this.TestType == SQLParamTestType.Unset)
                     testTypeValid = false;
                 else if (this.TestType == SQLParamTestType.CSV)
-                    testTypeValid = !string.IsNullOrEmpty(this.CSV);
+                    testTypeValid = (_csvValues != null) && (_csvValues.Count > 0);
                 else if (this.TestType == SQLParamTestType.Query)
                     testTypeValid = (_queryValues != null) && (_queryValues.Count > 0);
                 else
@@ -106,42 +121,17 @@ namespace Sprocket
 
         //==================================================================================================================
 
-        private List<string> _testValues;
         public List<string> TestValues
         {
             get
             {
                 if (TestType == SQLParamTestType.Query)
                     return _queryValues;
-                else if (_testValues == null)
-                    _testValues = this.GetTestValues();
-                return _testValues;
-            }
-            set
-            {
-                StoreCurrentTestValue();
-                if (TestType != SQLParamTestType.Query)
+                else if (TestType == SQLParamTestType.CSV)
+                    return _csvValues;
+                else
                     throw new WTFException();
-                _queryValues = value;
-                ChangeProperty("TestValues");
             }
-        }
-
-        private List<string> GetTestValues()
-        {
-            if (TestType == SQLParamTestType.Unset)
-                throw new WTFException();
-            else if (TestType == SQLParamTestType.CSV)
-            {
-                var ret = new List<string>();
-                ret.AddRange(this.CSV.Split(','));
-                ret.ConvertAll<string>(x => x.Trim());
-                return ret;
-            }
-            else if (TestType == SQLParamTestType.Query)
-                throw new WTFException("This function shouldn't be called except from TestValues, which shortcircuits this case");
-            else
-                throw new WTFException();
         }
 
         //==================================================================================================================
@@ -155,7 +145,6 @@ namespace Sprocket
         private bool? _isValidTestValueBeforeChange;
         private void ChangeProperty(string property)
         {
-            if(property != "TestValues") _testValues = null;
             if (_isValidTestValueBeforeChange == null) throw new WTFException();
             if (PropertyChanged != null)
             {
