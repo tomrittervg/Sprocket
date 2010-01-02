@@ -14,14 +14,14 @@ namespace Sprocket
     /// </summary>
     public partial class MainWindow : Window
     {
-        public TestContext CurentContext { get; set; }
+        public TestContext CurrentContext { get; set; }
         public static Random rndm = new Random();
         public static System.Diagnostics.Process CurrentProcess = System.Diagnostics.Process.GetCurrentProcess();
         public static List<string> TemporaryFilesCreated = new List<string>();
 
         public MainWindow()
         {
-            CurentContext = new TestContext();
+            CurrentContext = new TestContext();
             TestRunner.enableWaitStatus = delegate(string msg)
             {
                 this.Dispatcher.Invoke((Action)(() =>
@@ -52,21 +52,30 @@ namespace Sprocket
             if (result == true)
             {
                 originalProcLocation_PhysicalFile_Name.Content = ofd.FileName;
-                CurentContext.OriginalProcFilename = ofd.FileName;
+                CurrentContext.OriginalProcFilename = ofd.FileName;
             }
             originalProcLocation_PhysicalFile_statusImage.Source = WaitBMP;
             ThreadPool.QueueUserWorkItem(ValidatePhysicalProcFile);
         }
 
+        private void paramNameSource_QueryResults_editButton_Click(object sender, RoutedEventArgs e)
+        {
+            WriteMiniQueryWindow queryWin = new WriteMiniQueryWindow();
+            queryWin.mainWindowReference = this;
+            queryWin.ParamName = (sender as Button).Tag.ToString(); ;
+            queryWin.PreviousQuery = CurrentContext.ParameterValues.Find(x => x.Parameter.Name == queryWin.ParamName).Query;
+            queryWin.ShowDialog();
+        }
+
         private void ReloadContextFromGUI(object sender, RoutedEventArgs e)
         {
             //TODO: This function could be improved somehow to not reload everythign when only one thing is changed... I think
-            CurentContext.Server = serverName.Text;
-            CurentContext.Database = database.Text;
-            CurentContext.StoredProcedure = procName.Text;
+            CurrentContext.Server = serverName.Text;
+            CurrentContext.Database = database.Text;
+            CurrentContext.StoredProcedure = procName.Text;
 
-            if (originalProcLocation_AnotherProc.IsChecked == true) CurentContext.OriginalProcLocation = OriginalProcLocations.AnotherProc;
-            else if (originalProcLocation_PhysicalFile.IsChecked == true) CurentContext.OriginalProcLocation = OriginalProcLocations.PhysicalFile;
+            if (originalProcLocation_AnotherProc.IsChecked == true) CurrentContext.OriginalProcLocation = OriginalProcLocations.AnotherProc;
+            else if (originalProcLocation_PhysicalFile.IsChecked == true) CurrentContext.OriginalProcLocation = OriginalProcLocations.PhysicalFile;
 
             if (e.OriginalSource is System.Windows.Controls.RadioButton)
             {
@@ -76,10 +85,10 @@ namespace Sprocket
                     SQLParamTestType testtype;
 
                     if (radio.Name == "paramNameSource_CSV") testtype = SQLParamTestType.CSV;
-                    //else if (radio.Name == "paramNameSource_QueryResults") testtype = SQLParamTestType.Query;
+                    else if (radio.Name == "paramNameSource_QueryResults") testtype = SQLParamTestType.Query;
                     else throw new WTFException();
 
-                    CurentContext.ParameterValues.Find(x => x.Parameter.Name == radio.GroupName).TestType = testtype;
+                    CurrentContext.ParameterValues.Find(x => x.Parameter.Name == radio.GroupName).TestType = testtype;
                 }
             }
         }
@@ -87,7 +96,7 @@ namespace Sprocket
         private void paramNameSource_TextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             var txtBox = sender as TextBox;
-            var paramTestValue = CurentContext.ParameterValues.Find(x => x.Parameter.Name == txtBox.Tag.ToString());
+            var paramTestValue = CurrentContext.ParameterValues.Find(x => x.Parameter.Name == txtBox.Tag.ToString());
 
             if (txtBox.Name == "paramNameSource_CSV_value")
                 paramTestValue.CSV = txtBox.Text;
@@ -108,5 +117,6 @@ namespace Sprocket
             greyRectangle.Visibility = Visibility.Hidden;
             mainLayoutGrid.IsEnabled = true;
         }
+
     }
 }

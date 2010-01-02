@@ -61,11 +61,13 @@ namespace Sprocket
             get { return _query; }
             set
             {
-                StoreCurrentTestValue(); _query = value;
+                StoreCurrentTestValue(); 
+                _query = value;
                 ChangeProperty("Query");
             }
         }
         #endregion
+        private List<string> _queryValues { get; set; }
 
         //==================================================================================================================
 
@@ -75,6 +77,8 @@ namespace Sprocket
             {
                 if (this.TestType == SQLParamTestType.CSV)
                     return this.CSV.CountOf(',') + 1;
+                else if (this.TestType == SQLParamTestType.Query)
+                    return this._queryValues.Count();
                 else
                     throw new WTFException();
             }
@@ -89,6 +93,8 @@ namespace Sprocket
                     testTypeValid = false;
                 else if (this.TestType == SQLParamTestType.CSV)
                     testTypeValid = !string.IsNullOrEmpty(this.CSV);
+                else if (this.TestType == SQLParamTestType.Query)
+                    testTypeValid = (_queryValues != null) && (_queryValues.Count > 0);
                 else
                     throw new WTFException();
 
@@ -105,9 +111,19 @@ namespace Sprocket
         {
             get
             {
-                if (_testValues == null)
+                if (TestType == SQLParamTestType.Query)
+                    return _queryValues;
+                else if (_testValues == null)
                     _testValues = this.GetTestValues();
                 return _testValues;
+            }
+            set
+            {
+                StoreCurrentTestValue();
+                if (TestType != SQLParamTestType.Query)
+                    throw new WTFException();
+                _queryValues = value;
+                ChangeProperty("TestValues");
             }
         }
 
@@ -122,6 +138,8 @@ namespace Sprocket
                 ret.ConvertAll<string>(x => x.Trim());
                 return ret;
             }
+            else if (TestType == SQLParamTestType.Query)
+                throw new WTFException("This function shouldn't be called except from TestValues, which shortcircuits this case");
             else
                 throw new WTFException();
         }
@@ -137,7 +155,7 @@ namespace Sprocket
         private bool? _isValidTestValueBeforeChange;
         private void ChangeProperty(string property)
         {
-            _testValues = null;
+            if(property != "TestValues") _testValues = null;
             if (_isValidTestValueBeforeChange == null) throw new WTFException();
             if (PropertyChanged != null)
             {

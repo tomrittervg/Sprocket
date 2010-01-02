@@ -1,6 +1,7 @@
 ﻿<Window x:Class="Sprocket.MainWindow" x:Name="MainWin"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mine="clr-namespace:Sprocket"
     Title="Sprocket" Height="600" Width="800"
     Closed="MainWin_Closed" MaxWidth="800" MaxHeight="600">
     <DockPanel>
@@ -13,11 +14,10 @@
         </Border>
         <!-- =========================================================================================================== -->
         <Canvas x:Name="mainCanvas">
-            <MediaElement Source="Resources/small-loading-indicator.gif" />
-            <Grid Name="mainLayoutGrid">
+            <Grid Name="mainLayoutGrid" Width="790">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="400"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
@@ -29,41 +29,43 @@
                 </Grid.RowDefinitions>
 
                 <Label Grid.Column="0" Grid.Row="0"
-               >Server:</Label>
+                       >Server:</Label>
                 <TextBox Grid.Column="1" Grid.Row="0"
-                 Name="serverName"
-                 KeyUp="ReloadContextFromGUI"
-                 >localhost\sqlexpress</TextBox>
+                         Name="serverName"
+                         KeyUp="ReloadContextFromGUI"
+                         >localhost\sqlexpress</TextBox>
 
                 <Label Grid.Column="0" Grid.Row="1"
-               >Database:</Label>
+                       >Database:</Label>
                 <TextBox Grid.Column="1" Grid.Row="1"
-                 Name="database"
-                 KeyUp="ReloadContextFromGUI"
-                 >testdatabase</TextBox>
+                         Name="database"
+                         KeyUp="ReloadContextFromGUI"
+                         >testdatabase</TextBox>
 
                 <Label Grid.Column="0" Grid.Row="2"
-               >Stored Procedure:</Label>
+                       >Stored Procedure:</Label>
                 <TextBox Grid.Column="1" Grid.Row="2"
-                 Name="procName"
-                 KeyUp="ReloadContextFromGUI"
-                 >simpletestproc_prc</TextBox>
+                         Name="procName"
+                         KeyUp="ReloadContextFromGUI"
+                         >simpletestproc_prc</TextBox>
 
                 <Button Grid.Column="1" Grid.Row="3"
-                Width="150" HorizontalAlignment="Right" 
-                Click="LoadProcedure"
-                >Load Stored Procedure</Button>
+                        Width="150" HorizontalAlignment="Right" 
+                        Click="LoadProcedure"
+                        >Load Stored Procedure</Button>
 
                 <StackPanel Grid.Column="0" Grid.ColumnSpan="2"
-                    Grid.Row="4"
-                    VerticalAlignment="Center" HorizontalAlignment="Center">
+                            Grid.Row="4"
+                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                            >
                     <Label Name="noParamsStatusMessage"
-                >You haven't loaded a procedure yet</Label>
+                           >You haven't loaded a procedure yet</Label>
                 </StackPanel>
                 <!-- =========================================================================================================== -->
                 <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
                     <StackPanel Orientation="Horizontal">
-                        <Label Width="200" >Where is the original?</Label>
+                        <Label Width="200" 
+                               >Where is the original?</Label>
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Height="25">
                                 <RadioButton VerticalAlignment="Center" 
@@ -80,29 +82,30 @@
                                         Click="originalProcLocation_PhysicalFile_Button_Click"
                                         IsEnabled="{Binding ElementName=originalProcLocation_PhysicalFile, Path=IsChecked}"
                                         >Select File</Button>
-                                <Image Name="originalProcLocation_PhysicalFile_statusImage"
-                                        ></Image>
+                                <mine:StatusImage x:Name="originalProcLocation_PhysicalFile_statusImage"
+                                        ></mine:StatusImage>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Height="25">
                                 <RadioButton VerticalAlignment="Center" 
-                                     Name="originalProcLocation_AnotherProc"
-                                     GroupName="originalProcLocation"
-                                     IsEnabled="False"
-                                     >Another Procedure...</RadioButton>
+                                             Name="originalProcLocation_AnotherProc"
+                                             GroupName="originalProcLocation"
+                                             IsEnabled="False"
+                                             >Another Procedure...</RadioButton>
                                 <TextBox Height="20" VerticalAlignment="Center" Width="350"
-                                 Margin="15,0,15,0"
-                                 IsEnabled="{Binding ElementName=originalProcLocation_AnotherProc, Path=IsChecked}"
-                            ></TextBox>
+                                         Margin="15,0,15,0"
+                                         IsEnabled="{Binding ElementName=originalProcLocation_AnotherProc, Path=IsChecked}"
+                                         ></TextBox>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
                     <!-- =========================================================================================================== -->
                     <ItemsControl Name="spParameters" 
-                          HorizontalAlignment="Stretch" Margin="0,15,0,0">
+                                  HorizontalAlignment="Stretch" 
+                                  Margin="0,15,0,0">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Border BorderThickness="0,1,0,0" BorderBrush="Gray">
-                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0" Height="50">
                                         <Label Width="200"
                                                Content="{Binding Name}"
                                                />
@@ -122,19 +125,40 @@
                                                          KeyUp="paramNameSource_TextBox_KeyUp"
                                                          IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"
                                                          ></TextBox>
-                                                <Image Name="paramNameSource_CSV_statusImage"
-                                                        ></Image>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal">
-                                                <RadioButton GroupName="{Binding Name}"
-                                                             Name="paramNameSource_QueryResults"
-                                                             Width="150"
-                                                             Checked="ReloadContextFromGUI"
-                                                             >Result of Query</RadioButton>
-                                                <Label>... no query entered ...</Label>
-                                                <Button>Edit</Button>
-                                                <Image Name="paramNameSource_QueryResults_statusImage"
-                                                        ></Image>
+                                                <RadioButton 
+                                                    GroupName="{Binding Name}"
+                                                    Name="paramNameSource_QueryResults"
+                                                    Width="150"
+                                                    Checked="ReloadContextFromGUI"
+                                                    >Result of Query</RadioButton>
+                                                <TextBlock
+                                                    Name="paramNameSource_QueryResults_queryLabel"
+                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                    Tag="{Binding Name}"
+                                                    MaxWidth="233"
+                                                    TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
+                                                    VerticalAlignment="Center"
+                                                    >... no query entered ...</TextBlock>
+                                                <Button 
+                                                    Name="paramNameSource_QueryResults_editButton"
+                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                    Click="paramNameSource_QueryResults_editButton_Click"
+                                                    Tag="{Binding Name}"
+                                                    Margin="3,0,3,0"
+                                                    >Edit</Button>
+                                                <Label
+                                                    Name="paramNameSource_QueryResults_resultCount"
+                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                    Tag="{Binding Name}"
+                                                    >0 Results</Label>
+                                                <mine:StatusImage 
+                                                    x:Name="paramNameSource_QueryResults_statusImage" 
+                                                    Height="20" VerticalAlignment="Center"
+                                                    Tag="{Binding Name}"
+                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                    ></mine:StatusImage>
                                             </StackPanel>
                                         </StackPanel>
                                     </StackPanel>
@@ -143,13 +167,16 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <Button Margin="0,25,0,0" Width="150" HorizontalAlignment="Right"
-                    IsEnabled="{Binding CurentContext.IsValidContext,ElementName=MainWin}"
-                    Click="RunTests"
-                    >Run The Tests!</Button>
+                            IsEnabled="{Binding CurrentContext.IsValidContext,ElementName=MainWin}"
+                            Click="RunTests"
+                            >Run The Tests!</Button>
                 </StackPanel>
             </Grid>
             <!-- =========================================================================================================== -->
-            <Rectangle Name="greyRectangle" Width="800" Height="600" Fill="Gray" Opacity=".3"></Rectangle>
+            <Rectangle Name="greyRectangle" 
+                       Width="800" Height="600" 
+                       Fill="Gray" Opacity=".3"
+                       ></Rectangle>
             <Border BorderThickness="2" BorderBrush="Black" Background="White"
                     Canvas.Top="275" Height="50"
                     Canvas.Left="325" Width="150"

@@ -184,15 +184,13 @@ namespace Sprocket
             }
         }
 
-        private List<TestCase> _testCases;
+        /// <summary>FYI: This is an expensive function</summary>
         public List<TestCase> TestCases
         {
             get
             {
                 if (!IsValidContext) throw new WTFException("Cannot request TestCases if you don't have a valid Context");
-                if (_testCases == null) 
-                    _testCases = IronPython.GetTestCases(this.ParameterValues);
-                return _testCases;
+                return IronPython.GetTestCases(this.ParameterValues);
             }
         }
 
@@ -213,7 +211,6 @@ namespace Sprocket
         private bool? _isValidContextBeforeChange;
         private void ChangeProperty(string property)
         {
-            _testCases = null;
             if (_isValidContextBeforeChange == null) throw new WTFException();
             if (PropertyChanged != null)
             {

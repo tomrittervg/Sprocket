@@ -11,6 +11,26 @@ namespace Sprocket.SQL
 {
     public static class Queries
     {
+        public static HashSet<string> GetCollapsedQueryResults(string serverName, string database, string query)
+        {
+            var conn = Connections.GetConnection(serverName, database);
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = query;
+
+            conn.Open();
+            var results = cmd.ExecuteReader();
+
+            HashSet<string> parameters = new HashSet<string>();
+            while (results.Read())
+                for (int i = 0; i < results.FieldCount; i++)
+                    parameters.Add(results.GetValue(i).ToString());
+
+            conn.Close();
+
+            return parameters;
+        }
+        
         public static List<SQLParam> GetStoredProcParameters(string serverName, string database, string procName)
         {
             var conn = Connections.GetConnection(serverName, database);
