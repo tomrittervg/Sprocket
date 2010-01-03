@@ -95,11 +95,16 @@
                                 <RadioButton VerticalAlignment="Center" 
                                              Name="originalProcLocation_AnotherProc"
                                              GroupName="originalProcLocation"
+                                             Checked="ReloadContextFromGUI"
                                              >Another Procedure...</RadioButton>
                                 <TextBox Height="20" VerticalAlignment="Center" Width="350"
                                          Margin="15,0,15,0"
+                                         Name="originalProcLocation_AnotherProc_Name"
+                                         LostFocus="originalProcLocation_AnotherProc_Name_LostFocus"
                                          IsEnabled="{Binding ElementName=originalProcLocation_AnotherProc, Path=IsChecked}"
                                          ></TextBox>
+                                <mine:StatusImage x:Name="originalProcLocation_AnotherProc_statusImage"
+                                        ></mine:StatusImage>
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>

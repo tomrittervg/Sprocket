@@ -13,6 +13,7 @@ namespace Sprocket
     {
         public const string InputCouldNotBeParsed = "Input file could not be parsed by my Regex.";
         public const string ProcParametersDontMatch = "Proc Parameters Don't Match";
+        public const string ProcedureNotFound = "Procedure could not be found.";
 
         public SpecificException() : base() { }
         public SpecificException(string msg) : base(msg) { }

@@ -56,12 +56,12 @@ namespace Sprocket
             {
                 originalProcLocation_PhysicalFile_Name.Content = ofd.FileName;
                 
-                CurrentContext.ComparisonProcFilename = ofd.FileName;
-                CurrentContext.ComparisonProcValid = false;
+                CurrentContext.ComparisonProc_PhysicalFile_Filename = ofd.FileName;
+                CurrentContext.ComparisonProc_PhysicalFile_Valid = false;
                 
                 originalProcLocation_PhysicalFile_statusImage.Source = WaitBMP;
-                
-                ThreadPool.QueueUserWorkItem(ValidatePhysicalProcFile);
+
+                ThreadPool.QueueUserWorkItem(ValidateOriginalProcFromPhysicalFile);
             }
         }
 
@@ -81,8 +81,15 @@ namespace Sprocket
             CurrentContext.Database = database.Text;
             CurrentContext.StoredProcedure = procName.Text;
 
-            if (originalProcLocation_AnotherProc.IsChecked == true) CurrentContext.OriginalProcLocation = OriginalProcLocations.AnotherProc;
-            else if (originalProcLocation_PhysicalFile.IsChecked == true) CurrentContext.OriginalProcLocation = OriginalProcLocations.PhysicalFile;
+            if (originalProcLocation_AnotherProc.IsChecked == true)
+            {
+                CurrentContext.OriginalProcLocation = OriginalProcLocations.AnotherProc;
+                CurrentContext.ComparisonProc_AnotherProc_ProcName = originalProcLocation_AnotherProc_Name.Text;
+            }
+            else if (originalProcLocation_PhysicalFile.IsChecked == true)
+            {
+                CurrentContext.OriginalProcLocation = OriginalProcLocations.PhysicalFile;
+            }
 
             if (e.OriginalSource is System.Windows.Controls.RadioButton)
             {
@@ -107,6 +114,13 @@ namespace Sprocket
 
             if (txtBox.Name == "paramNameSource_CSV_value") paramTestValue.CSV = txtBox.Text;
             else throw new WTFException();
+        }
+
+        private void originalProcLocation_AnotherProc_Name_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ReloadContextFromGUI(sender, e);
+            originalProcLocation_AnotherProc_statusImage.Source = WaitBMP;
+            ThreadPool.QueueUserWorkItem(ValidateOriginalProcFromAnotherProc);
         }
     }
 }

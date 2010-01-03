@@ -20,7 +20,8 @@ namespace Sprocket
         public TestContext()
         {
             OriginalProcLocation = OriginalProcLocations.Unset;
-            ComparisonProcValid = false;
+            ComparisonProc_AnotherProc_Valid = false;
+            ComparisonProc_PhysicalFile_Valid = false;
         }
 
         #region Server
@@ -84,49 +85,79 @@ namespace Sprocket
         }
         #endregion
 
-        #region ComparisonProcFilename
-        private string _comparisonProcFilename { get; set; }
+        #region ComparisonProc_PhysicalFile_Filename
+        private string _comparisonProc_PhysicalFile_Filename { get; set; }
         /// <summary>The filename of the Comparison Proc.  Used when OriginalProcLocation is set to PhysicalFile</summary>
-        public string ComparisonProcFilename
+        public string ComparisonProc_PhysicalFile_Filename
         {
             [System.Diagnostics.DebuggerStepThrough]
-            get { return _comparisonProcFilename; }
+            get { return _comparisonProc_PhysicalFile_Filename; }
             set
             {
                 StoreCurrentTestValue();
-                _comparisonProcFilename = value;
-                ChangeProperty("ComparisonProcFilename");
+                _comparisonProc_PhysicalFile_Filename = value;
+                ChangeProperty("ComparisonProc_PhysicalFile_Filename");
+            }
+        }
+        #endregion
+        #region ComparisonProc_PhysicalFile_ProcName
+        private string _comparisonProc_PhysicalFile_ProcName { get; set; }
+        /// <summary>The procedure we will compare StoredProcedure to</summary>
+        public string ComparisonProc_PhysicalFile_ProcName
+        {
+            [System.Diagnostics.DebuggerStepThrough]
+            get { return _comparisonProc_PhysicalFile_ProcName; }
+            set
+            {
+                StoreCurrentTestValue();
+                _comparisonProc_PhysicalFile_ProcName = value;
+                ChangeProperty("ComparisonProc_PhysicalFile_ProcName");
+            }
+        }
+        #endregion
+        #region ComparisonProc_PhysicalFile_Valid
+        private bool _comparisonProc_PhysicalFile_Valid { get; set; }
+        /// <summary>Whether or not the Comparison Proc has matching parameters</summary>
+        public bool ComparisonProc_PhysicalFile_Valid
+        {
+            [System.Diagnostics.DebuggerStepThrough]
+            get { return _comparisonProc_PhysicalFile_Valid; }
+            set
+            {
+                StoreCurrentTestValue();
+                _comparisonProc_PhysicalFile_Valid = value;
+                ChangeProperty("ComparisonProc_PhysicalFile_Valid");
             }
         }
         #endregion
 
-        #region ComparisonProc
-        private string _comparisonProc { get; set; }
+        #region ComparisonProc_AnotherProc_ProcName
+        private string _comparisonProc_AnotherProc_ProcName { get; set; }
         /// <summary>The procedure we will compare StoredProcedure to</summary>
-        public string ComparisonProc
+        public string ComparisonProc_AnotherProc_ProcName
         {
             [System.Diagnostics.DebuggerStepThrough]
-            get { return _comparisonProc; }
+            get { return _comparisonProc_AnotherProc_ProcName; }
             set
             {
                 StoreCurrentTestValue();
-                _comparisonProc = value;
-                ChangeProperty("ComparisonProc");
+                _comparisonProc_AnotherProc_ProcName = value;
+                ChangeProperty("ComparisonProc_AnotherProc_ProcName");
             }
         }
         #endregion
-        #region ComparisonProcValid
-        private bool _comparisonProcValid { get; set; }
+        #region ComparisonProc_AnotherProc_Valid
+        private bool _comparisonProc_AnotherProc_Valid { get; set; }
         /// <summary>Whether or not the Comparison Proc has matching parameters</summary>
-        public bool ComparisonProcValid
+        public bool ComparisonProc_AnotherProc_Valid
         {
             [System.Diagnostics.DebuggerStepThrough]
-            get { return _comparisonProcValid; }
+            get { return _comparisonProc_AnotherProc_Valid; }
             set
             {
                 StoreCurrentTestValue();
-                _comparisonProcValid = value;
-                ChangeProperty("ComparisonProcValid");
+                _comparisonProc_AnotherProc_Valid = value;
+                ChangeProperty("ComparisonProc_AnotherProc_Valid");
             }
         }
         #endregion
@@ -158,6 +189,19 @@ namespace Sprocket
                 return this.ParameterValues.Aggregate<SQLParamTestValues, int, int>(1, (a, x) => a * x.QueryCombinations, x => x);
             }
         }
+
+        public string ComparisonProc
+        {
+            get
+            {
+                if (OriginalProcLocation == OriginalProcLocations.AnotherProc)
+                    return ComparisonProc_AnotherProc_ProcName;
+                else if (OriginalProcLocation == OriginalProcLocations.PhysicalFile)
+                    return ComparisonProc_PhysicalFile_ProcName;
+                else
+                    throw new WTFException();
+            }
+        }
         /// <summary>If the context is complete, and able to have its tests run</summary>
         public bool IsValidContext
         {
@@ -168,9 +212,9 @@ namespace Sprocket
                 if (OriginalProcLocation == OriginalProcLocations.Unset)
                     originalProcValid = false;
                 else if (OriginalProcLocation == OriginalProcLocations.AnotherProc)
-                    originalProcValid = ComparisonProcValid;
+                    originalProcValid = ComparisonProc_AnotherProc_Valid;
                 else if (OriginalProcLocation == OriginalProcLocations.PhysicalFile)
-                    originalProcValid = ComparisonProcValid;
+                    originalProcValid = ComparisonProc_PhysicalFile_Valid;
                 else
                     throw new WTFException();
 

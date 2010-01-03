@@ -48,6 +48,8 @@ namespace Sprocket.SQL
 
             conn.Open();
             var results = cmd.ExecuteReader();
+            if (!results.HasRows)
+                throw new SpecificException(SpecificException.ProcedureNotFound);
 
             List<SQLParam> paramList = new List<SQLParam>(5);
             while (results.Read())

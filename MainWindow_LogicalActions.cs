@@ -105,42 +105,69 @@ namespace Sprocket
             }
         }
 
-        protected void ValidatePhysicalProcFile(object data)
+        #region Specific Original Proc Comparison Functions
+        protected void ValidateOriginalProcFromPhysicalFile(object data)
         {
-            Thread.Sleep(1000);//Let the user know some work is being done
             try
             {
-                var newName = SQL.Queries.TurnFileIntoProcedure(CurrentContext.ComparisonProcFilename, CurrentContext.Server, CurrentContext.Database);
-                var newProcParams = SQL.Queries.GetStoredProcParameters(CurrentContext.Server, CurrentContext.Database, newName);
+                var newName = SQL.Queries.TurnFileIntoProcedure(CurrentContext.ComparisonProc_PhysicalFile_Filename, CurrentContext.Server, CurrentContext.Database);
+                CurrentContext.ComparisonProc_PhysicalFile_ProcName = newName;
 
-                if (!CurrentContext.ParameterValues.ParametersMatch(newProcParams))
-                    throw new SpecificException(SpecificException.ProcParametersDontMatch);
-
-                CurrentContext.ComparisonProc = newName;
-                CurrentContext.ComparisonProcValid = true;
-                this.Dispatcher.Invoke((Action)(() =>
-                {
-                    originalProcLocation_PhysicalFile_statusImage.Source = GoodBMP;
-                    originalProcLocation_PhysicalFile_statusImage.MouseUp -= new System.Windows.Input.MouseButtonEventHandler(displayErrorMessage);
-                }));
+                ValidateProcParametersMatchCurrentContext(newName, originalProcLocation_PhysicalFile_statusImage,
+                    delegate(bool status) { CurrentContext.ComparisonProc_PhysicalFile_Valid = status; });
             }
             catch (SpecificException ex)
             {
-                if (ex.Message.OneOf(SpecificException.ProcParametersDontMatch, SpecificException.InputCouldNotBeParsed))
-                {
-                    this.Dispatcher.Invoke((Action)(() =>
-                    {
-                        originalProcLocation_PhysicalFile_statusImage.Source = BadBMP;
-                        originalProcLocation_PhysicalFile_statusImage.ErrorMessage = ex.Message;
-                        originalProcLocation_PhysicalFile_statusImage.MouseUp += new System.Windows.Input.MouseButtonEventHandler(displayErrorMessage);
-                    }));
-                    CurrentContext.ComparisonProc = string.Empty;
-                    CurrentContext.ComparisonProcValid = false;
-                }
+                if (ex.Message.OneOf(SpecificException.InputCouldNotBeParsed))
+                    ValidateProcParametersMatchFail(ex.Message, originalProcLocation_PhysicalFile_statusImage,
+                        delegate(bool status) { CurrentContext.ComparisonProc_PhysicalFile_Valid = status; });
                 else
                     throw;
             }
         }
+        protected void ValidateOriginalProcFromAnotherProc(object data)
+        {
+            ValidateProcParametersMatchCurrentContext(CurrentContext.ComparisonProc_AnotherProc_ProcName, originalProcLocation_AnotherProc_statusImage,
+                delegate(bool status) { CurrentContext.ComparisonProc_AnotherProc_Valid = status; });
+        }
+        #endregion 
+
+        #region Generic Original Proc Comparison Functions
+        protected void ValidateProcParametersMatchCurrentContext(string procName, StatusImage imgToUpdate, Action<bool> setValidStatus)
+        {
+            try
+            {
+                var newProcParams = SQL.Queries.GetStoredProcParameters(CurrentContext.Server, CurrentContext.Database, procName);
+
+                if (!CurrentContext.ParameterValues.ParametersMatch(newProcParams))
+                    throw new SpecificException(SpecificException.ProcParametersDontMatch);
+
+                setValidStatus(true);
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    imgToUpdate.Source = GoodBMP;
+                    imgToUpdate.MouseUp -= new System.Windows.Input.MouseButtonEventHandler(displayErrorMessage);
+                }));
+            }
+            catch (SpecificException ex)
+            {
+                if (ex.Message.OneOf(SpecificException.ProcParametersDontMatch, SpecificException.ProcedureNotFound))
+                    ValidateProcParametersMatchFail(ex.Message, imgToUpdate, setValidStatus);
+                else
+                    throw;
+            }
+        }
+        protected void ValidateProcParametersMatchFail(string errorMessage, StatusImage imgToUpdate, Action<bool> setValidStatus)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                imgToUpdate.Source = BadBMP;
+                imgToUpdate.ErrorMessage = errorMessage;
+                imgToUpdate.MouseUp += new System.Windows.Input.MouseButtonEventHandler(displayErrorMessage);
+            }));
+            setValidStatus(false);
+        }
+        #endregion
 
         public void CheckUpdateStatus(object data)
         {
