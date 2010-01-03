@@ -64,8 +64,8 @@
                             Grid.Row="4"
                             VerticalAlignment="Center" HorizontalAlignment="Center"
                             >
-                    <Label Name="noParamsStatusMessage"
-                           >You haven't loaded a procedure yet</Label>
+                    <TextBlock Name="noParamsStatusMessage" TextWrapping="Wrap"
+                           >You haven't loaded a procedure yet</TextBlock>
                 </StackPanel>
                 <!-- =========================================================================================================== -->
                 <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
@@ -95,7 +95,6 @@
                                 <RadioButton VerticalAlignment="Center" 
                                              Name="originalProcLocation_AnotherProc"
                                              GroupName="originalProcLocation"
-                                             IsEnabled="False"
                                              >Another Procedure...</RadioButton>
                                 <TextBox Height="20" VerticalAlignment="Center" Width="350"
                                          Margin="15,0,15,0"
@@ -188,10 +187,11 @@
                     Canvas.Left="325" Width="150"
                     Name="statusContainer"
                     >
-                <Label Margin="5,5,5,5"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                       Name="statusLabel"
-                       >Currently Viewing Output</Label>
+                <TextBlock Margin="5,5,5,5"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" 
+                           TextWrapping="Wrap" TextAlignment="Center"
+                           Name="statusLabel"
+                           >Currently Viewing Output</TextBlock>
             </Border>
         </Canvas>
     </DockPanel>

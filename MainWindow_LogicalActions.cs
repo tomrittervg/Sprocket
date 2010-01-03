@@ -16,21 +16,37 @@ namespace Sprocket
     {
         protected void LoadProcedure(object sender, RoutedEventArgs e)
         {
+            EnableWaitStatus("Attempting to load procedure");
+
             //TODO: Is there really no better way of show/hiding rows than by futzing with their height?
             NoSPLoadedRow.Height = new GridLength(0);
             SPLoadedRow.Height = new GridLength(0);
+            ThreadPool.QueueUserWorkItem(LoadProcedure, new string[] { serverName.Text, database.Text, procName.Text });
+        }
 
+        protected void LoadProcedure(object stte)
+        {
+            string[] state = (string[])stte;
             try
             {
-                var data = SQL.Queries.GetStoredProcParameters(serverName.Text, database.Text, procName.Text);
-                spParameters.ItemsSource = data;
+                var data = SQL.Queries.GetStoredProcParameters(state[0], state[1], state[2]);
                 CurrentContext.LoadParameters(data);
-                SPLoadedRow.Height = new GridLength();
+
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    spParameters.ItemsSource = data;
+                    DisableWaitStatus();
+                    SPLoadedRow.Height = new GridLength();
+                }));
             }
             catch (SqlException ex)
             {
-                noParamsStatusMessage.Content = "Procedure Load Failed: \n" + ex.Message;
-                NoSPLoadedRow.Height = new GridLength();
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    noParamsStatusMessage.Text = "Procedure Load Failed: \n" + ex.Message;
+                    DisableWaitStatus();
+                    NoSPLoadedRow.Height = new GridLength();
+                }));
             }
         }
 

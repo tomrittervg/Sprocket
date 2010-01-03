@@ -17,7 +17,7 @@ namespace Sprocket
         {
             statusContainer.Visibility = Visibility.Visible;
             greyRectangle.Visibility = Visibility.Visible;
-            statusLabel.Content = message;
+            statusLabel.Text = message;
             mainLayoutGrid.IsEnabled = false;
         }
         public void DisableWaitStatus()
