@@ -179,7 +179,7 @@ namespace Sprocket
 
                 var latestVersion = new Version(response.GetResponseString());
 
-                if (currentVersion == latestVersion)
+                if (currentVersion >= latestVersion)
                     this.Dispatcher.Invoke((Action)(() =>
                     {
                         updateLabel.Text = "This is the latest version of Sprocket.";
