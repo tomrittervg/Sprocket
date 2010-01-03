@@ -42,7 +42,7 @@ namespace Sprocket.DiffEngine
             {
                 return Registry.LocalMachine.OpenSubKey("Software\\TortoiseSVN").GetValue("TMergePath").ToString();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("Could not Find TortoiseMarge Path from Registry.  Any number things could be incorrect. Sorry.");
             }

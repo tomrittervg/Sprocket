@@ -104,6 +104,7 @@
   <ItemGroup>
     <Compile Include="Diff Engine\IDiffEngine.cs" />
     <Compile Include="Diff Engine\TortoiseMerge.cs" />
+    <Compile Include="Extensions\HTTPWebResponseExtensions.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TreeTraversal.cs" />

@@ -41,13 +41,13 @@ namespace Sprocket
                 SQL.Queries.DeleteProcsBeginningWith("sprockettestrun" + "_" + (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString(),
                     CurrentContext.Server, CurrentContext.Database);
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
             try
             {
                 for (int i = 0; i < TemporaryFilesCreated.Count; i++)
                     File.Delete(TemporaryFilesCreated[i]);
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
         }
 
         #region Image Resources

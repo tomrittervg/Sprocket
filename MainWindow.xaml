@@ -5,12 +5,18 @@
     Title="Sprocket" Height="600" Width="800"
     Closed="MainWin_Closed" MaxWidth="800" MaxHeight="600">
     <DockPanel>
-        <Border Width="800" Height="25"
+        <Border Height="15"
                 DockPanel.Dock="Bottom" 
                 BorderBrush="Gray" BorderThickness="0,1,0,0">
-            <Label Name="updateLabel"
+            <DockPanel>
+                <TextBlock Name="currentVersionLabel"
+                           DockPanel.Dock="Right"
+                   >
+                </TextBlock>
+                <TextBlock Name="updateLabel"
                    >Update Checking Disabled
-            </Label>
+                </TextBlock>
+            </DockPanel>
         </Border>
         <!-- =========================================================================================================== -->
         <Canvas x:Name="mainCanvas">

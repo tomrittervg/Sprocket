@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -122,6 +123,46 @@ namespace Sprocket
                 }
                 else
                     throw;
+            }
+        }
+
+        public void CheckUpdateStatus(object data)
+        {
+            var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            try
+            {
+                var request = WebRequest.Create("http://ritter.vg/sprocket/latestversion.txt");
+                var response = request.GetResponse();
+
+                var latestVersion = new Version(response.GetResponseString());
+
+                if (currentVersion == latestVersion)
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        updateLabel.Text = "This is the latest version of Sprocket.";
+                        currentVersionLabel.Text = "v" + currentVersion.ToString();
+                    }));
+                else
+                    this.Dispatcher.Invoke((Action)(() =>
+                        {
+                            currentVersionLabel.Text = "v" + currentVersion.ToString();
+                            updateLabel.Text = "A new version (" + latestVersion.ToString() + ") is available. Stop living in the past man!";
+                            updateLabel.Foreground = new SolidColorBrush(Colors.Blue);
+                            updateLabel.Cursor = System.Windows.Input.Cursors.Hand;
+                            updateLabel.TextDecorations = TextDecorations.Underline;
+                            updateLabel.MouseUp += new System.Windows.Input.MouseButtonEventHandler(delegate(object sender, System.Windows.Input.MouseButtonEventArgs e)
+                            {
+                                System.Diagnostics.Process.Start("http://ritter.vg/sprocket/update.html");
+                            });
+                        }));
+            }
+            catch (Exception)
+            {
+                this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        currentVersionLabel.Text = "v" + currentVersion.ToString();
+                        updateLabel.Text = "Error Checking For Updates.  Application will try again on next load.";
+                    }));
             }
         }
     }

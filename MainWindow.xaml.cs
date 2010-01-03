@@ -42,6 +42,7 @@ namespace Sprocket
             InitializeComponent();
             InitializeImageResources();
             DisableWaitStatus();
+            ThreadPool.QueueUserWorkItem(CheckUpdateStatus);
         }
 
         private void originalProcLocation_PhysicalFile_Button_Click(object sender, RoutedEventArgs e)
