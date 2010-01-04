@@ -39,14 +39,17 @@ namespace Sprocket
                     SPLoadedRow.Height = new GridLength();
                 }));
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
-                this.Dispatcher.Invoke((Action)(() =>
-                {
-                    noParamsStatusMessage.Text = "Procedure Load Failed: \n" + ex.Message;
-                    DisableWaitStatus();
-                    NoSPLoadedRow.Height = new GridLength();
-                }));
+                if (ex is SqlException || (ex is SpecificException && ex.Message.OneOf(SpecificException.ProcedureNotFound)))
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        noParamsStatusMessage.Text = "Procedure Load Failed: \n" + ex.Message;
+                        DisableWaitStatus();
+                        NoSPLoadedRow.Height = new GridLength();
+                    }));
+                else
+                    throw;
             }
         }
 
