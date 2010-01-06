@@ -1,203 +1,260 @@
-﻿<Window x:Class="Sprocket.MainWindow" x:Name="MainWin"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mine="clr-namespace:Sprocket"
-    Title="Sprocket" Height="600" Width="800"
-    Closed="MainWin_Closed" MaxWidth="800" MaxHeight="600">
+﻿<Window x:Class="Sprocket.MainWindow"
+        x:Name="MainWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mine="clr-namespace:Sprocket"
+        Title="Sprocket"
+        Height="600"
+        Width="800"
+        Closed="MainWin_Closed">
     <DockPanel>
         <Border Height="15"
-                DockPanel.Dock="Bottom" 
-                BorderBrush="Gray" BorderThickness="0,1,0,0">
+                DockPanel.Dock="Bottom"
+                BorderBrush="Gray"
+                BorderThickness="0,1,0,0">
             <DockPanel>
                 <TextBlock Name="currentVersionLabel"
-                           DockPanel.Dock="Right"
-                   >
+                           DockPanel.Dock="Right">
                 </TextBlock>
-                <TextBlock Name="updateLabel"
-                   >Update Checking Disabled
+                <TextBlock Name="updateLabel">Update Checking Disabled
                 </TextBlock>
             </DockPanel>
         </Border>
         <!-- =========================================================================================================== -->
-        <Canvas x:Name="mainCanvas">
-            <Grid Name="mainLayoutGrid" Width="790">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="400"/>
-                </Grid.ColumnDefinitions>
+        <Grid Name="mainLayoutGrid"
+              HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="50"
+                               x:Name="NoSPLoadedRow" />
+                <RowDefinition Height="00"
+                               x:Name="SPLoadedRow" />
+            </Grid.RowDefinitions>
+
+            <Label Grid.Column="0"
+                   Grid.Row="0">Server:</Label>
+            <TextBox Grid.Column="1"
+                     Grid.Row="0"
+                     Name="serverName"
+                     KeyUp="ReloadContextFromGUI"></TextBox>
+
+            <Label Grid.Column="0"
+                   Grid.Row="1">Database:</Label>
+            <TextBox Grid.Column="1"
+                     Grid.Row="1"
+                     Name="database"
+                     KeyUp="ReloadContextFromGUI"></TextBox>
+
+            <Label Grid.Column="0"
+                   Grid.Row="2">Stored Procedure:</Label>
+            <TextBox Grid.Column="1"
+                     Grid.Row="2"
+                     Name="procName"
+                     KeyUp="ReloadContextFromGUI"></TextBox>
+
+            <Button Grid.Column="1"
+                    Grid.Row="3"
+                    Width="150"
+                    HorizontalAlignment="Right"
+                    Click="LoadProcedure">Load Stored Procedure</Button>
+
+            <StackPanel Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Grid.Row="4"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <TextBlock Name="noParamsStatusMessage"
+                           TextWrapping="Wrap">You haven't loaded a procedure yet</TextBlock>
+            </StackPanel>
+            <!-- =========================================================================================================== -->
+            <Grid Grid.Row="5"
+                  Grid.Column="0"
+                  Grid.ColumnSpan="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25" />
                     <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="50" x:Name="NoSPLoadedRow" />
-                    <RowDefinition Height="0" x:Name="SPLoadedRow" />
+                    <RowDefinition Height="5" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="35" />
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="30" />
+                </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="0" Grid.Row="0"
-                       >Server:</Label>
-                <TextBox Grid.Column="1" Grid.Row="0"
-                         Name="serverName"
-                         KeyUp="ReloadContextFromGUI"
-                         >localhost\sqlexpress</TextBox>
+                <Label Grid.Column="0"
+                       Grid.Row="0"
+                       Grid.RowSpan="2"
+                       VerticalAlignment="Center">Where is the original?</Label>
 
-                <Label Grid.Column="0" Grid.Row="1"
-                       >Database:</Label>
-                <TextBox Grid.Column="1" Grid.Row="1"
-                         Name="database"
-                         KeyUp="ReloadContextFromGUI"
-                         >testdatabase</TextBox>
-
-                <Label Grid.Column="0" Grid.Row="2"
-                       >Stored Procedure:</Label>
-                <TextBox Grid.Column="1" Grid.Row="2"
-                         Name="procName"
-                         KeyUp="ReloadContextFromGUI"
-                         >simpletestproc_prc</TextBox>
-
-                <Button Grid.Column="1" Grid.Row="3"
-                        Width="150" HorizontalAlignment="Right" 
-                        Click="LoadProcedure"
-                        >Load Stored Procedure</Button>
-
-                <StackPanel Grid.Column="0" Grid.ColumnSpan="2"
-                            Grid.Row="4"
-                            VerticalAlignment="Center" HorizontalAlignment="Center"
-                            >
-                    <TextBlock Name="noParamsStatusMessage" TextWrapping="Wrap"
-                           >You haven't loaded a procedure yet</TextBlock>
-                </StackPanel>
+                <!-- ============================ -->
+                <RadioButton Grid.Column="1"
+                             Grid.Row="0"
+                             VerticalAlignment="Center"
+                             Name="originalProcLocation_PhysicalFile"
+                             GroupName="originalProcLocation"
+                             Margin="5,0,0,0"
+                             Checked="ReloadContextFromGUI">A Physical File...</RadioButton>
+                <Label Grid.Column="2"
+                       Grid.Row="0"
+                       Margin="5,0,0,0"
+                       Name="originalProcLocation_PhysicalFile_Name"
+                       HorizontalAlignment="Left">...no file selected...</Label>
+                <Button Grid.Column="2"
+                        Grid.Row="0"
+                        Height="20"
+                        MaxWidth="150"
+                        Margin="5,0,0,0"
+                        HorizontalAlignment="Right"
+                        Name="originalProcLocation_PhysicalFile_Button"
+                        Click="originalProcLocation_PhysicalFile_Button_Click"
+                        IsEnabled="{Binding ElementName=originalProcLocation_PhysicalFile, Path=IsChecked}">Select File</Button>
+                <mine:StatusImage Grid.Column="3"
+                                  Grid.Row="0"
+                                  Margin="5,0,0,0"
+                                  x:Name="originalProcLocation_PhysicalFile_statusImage"></mine:StatusImage>
+                <!-- ============================ -->
+                <RadioButton Grid.Column="1"
+                             Grid.Row="1"
+                             VerticalAlignment="Center"
+                             Name="originalProcLocation_AnotherProc"
+                             GroupName="originalProcLocation"
+                             Margin="5,0,0,0"
+                             Checked="ReloadContextFromGUI">Another Procedure...</RadioButton>
+                <TextBox Grid.Column="2"
+                         Grid.Row="1"
+                         Height="20"
+                         Margin="5,0,0,0"
+                         VerticalAlignment="Center"
+                         Name="originalProcLocation_AnotherProc_Name"
+                         LostFocus="originalProcLocation_AnotherProc_Name_LostFocus"
+                         IsEnabled="{Binding ElementName=originalProcLocation_AnotherProc, Path=IsChecked}"></TextBox>
+                <mine:StatusImage Grid.Column="3"
+                                  Grid.Row="1"
+                                  Margin="5,0,0,0"
+                                  x:Name="originalProcLocation_AnotherProc_statusImage"></mine:StatusImage>
                 <!-- =========================================================================================================== -->
-                <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Width="200" 
-                               >Where is the original?</Label>
-                        <StackPanel>
-                            <StackPanel Orientation="Horizontal" Height="25">
-                                <RadioButton VerticalAlignment="Center" 
-                                             Name="originalProcLocation_PhysicalFile"
-                                             GroupName="originalProcLocation" 
-                                             Checked="ReloadContextFromGUI"
-                                             >A Physical File...</RadioButton>
-                                <Label VerticalAlignment="Center" Margin="15,0,15,0"
-                                       Name="originalProcLocation_PhysicalFile_Name"
-                                       MaxWidth="397"
-                                       >...no file selected...</Label>
-                                <Button Height="20" VerticalAlignment="Center"
-                                        Name="originalProcLocation_PhysicalFile_Button"
-                                        Click="originalProcLocation_PhysicalFile_Button_Click"
-                                        IsEnabled="{Binding ElementName=originalProcLocation_PhysicalFile, Path=IsChecked}"
-                                        >Select File</Button>
-                                <mine:StatusImage x:Name="originalProcLocation_PhysicalFile_statusImage"
-                                        ></mine:StatusImage>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Height="25">
-                                <RadioButton VerticalAlignment="Center" 
-                                             Name="originalProcLocation_AnotherProc"
-                                             GroupName="originalProcLocation"
-                                             Checked="ReloadContextFromGUI"
-                                             >Another Procedure...</RadioButton>
-                                <TextBox Height="20" VerticalAlignment="Center" Width="350"
-                                         Margin="15,0,15,0"
-                                         Name="originalProcLocation_AnotherProc_Name"
-                                         LostFocus="originalProcLocation_AnotherProc_Name_LostFocus"
-                                         IsEnabled="{Binding ElementName=originalProcLocation_AnotherProc, Path=IsChecked}"
-                                         ></TextBox>
-                                <mine:StatusImage x:Name="originalProcLocation_AnotherProc_statusImage"
-                                        ></mine:StatusImage>
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                    <!-- =========================================================================================================== -->
-                    <ItemsControl Name="spParameters" 
-                                  HorizontalAlignment="Stretch" 
-                                  Margin="0,15,0,0">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border BorderThickness="0,1,0,0" BorderBrush="Gray">
-                                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0" Height="50">
-                                        <Label Width="200"
-                                               Content="{Binding Name}"
-                                               />
-                                        <Label Width="100"
-                                               Content="{Binding Type}"
-                                               />
-                                        <StackPanel Margin="0,0,0,5" Width="486">
-                                            <StackPanel Orientation="Horizontal">
-                                                <RadioButton GroupName="{Binding Name}" 
-                                                             Name="paramNameSource_CSV"
-                                                             Width="150"
-                                                             Checked="ReloadContextFromGUI"
-                                                             >Comma Seperated List</RadioButton>
-                                                <TextBox Width="400" 
-                                                         Name="paramNameSource_CSV_value"
-                                                         Tag="{Binding Name}"
-                                                         KeyUp="paramNameSource_CSV_KeyUp"
-                                                         IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"
-                                                         ></TextBox>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <RadioButton 
-                                                    GroupName="{Binding Name}"
-                                                    Name="paramNameSource_QueryResults"
-                                                    Width="150"
-                                                    Checked="ReloadContextFromGUI"
-                                                    >Result of Query</RadioButton>
-                                                <TextBlock
-                                                    Name="paramNameSource_QueryResults_queryLabel"
-                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
-                                                    Tag="{Binding Name}"
-                                                    MaxWidth="233"
-                                                    TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
-                                                    VerticalAlignment="Center"
-                                                    >... no query entered ...</TextBlock>
-                                                <Button 
-                                                    Name="paramNameSource_QueryResults_editButton"
-                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
-                                                    Click="paramNameSource_QueryResults_editButton_Click"
-                                                    Tag="{Binding Name}"
-                                                    Margin="3,0,3,0"
-                                                    >Edit</Button>
-                                                <Label
-                                                    Name="paramNameSource_QueryResults_resultCount"
-                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
-                                                    Tag="{Binding Name}"
-                                                    >0 Results</Label>
-                                                <mine:StatusImage 
-                                                    x:Name="paramNameSource_QueryResults_statusImage" 
-                                                    Height="20" VerticalAlignment="Center"
-                                                    Tag="{Binding Name}"
-                                                    IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
-                                                    ></mine:StatusImage>
-                                            </StackPanel>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    <Button Margin="0,25,0,0" Width="150" HorizontalAlignment="Right"
-                            IsEnabled="{Binding CurrentContext.IsValidContext,ElementName=MainWin}"
-                            Click="RunTests"
-                            >Run The Tests!</Button>
-                </StackPanel>
+                <Border BorderThickness="0,1,0,1"
+                        BorderBrush="Gray"
+                        Grid.Row="3"
+                        Grid.ColumnSpan="4">
+                    <ScrollViewer>
+                        <ItemsControl Name="spParameters"
+                                      HorizontalAlignment="Stretch">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderThickness="0,1,0,0"
+                                            BorderBrush="Gray">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="25" />
+                                                <RowDefinition Height="25" />
+                                                <RowDefinition Height="5" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="20" />
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="4*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <Label Grid.Column="1"
+                                                   Grid.Row="0"
+                                                   Grid.RowSpan="2"
+                                                   VerticalAlignment="Center"
+                                                   Content="{Binding Name}" />
+
+                                            <Label Grid.Column="2"
+                                                   Grid.Row="0"
+                                                   Grid.RowSpan="2"
+                                                   VerticalAlignment="Center"
+                                                   Content="{Binding Type}" />
+                                            <!-- ============================ -->
+                                            <RadioButton Grid.Column="3"
+                                                         Grid.Row="0"
+                                                         GroupName="{Binding Name}"
+                                                         Name="paramNameSource_CSV"
+                                                         Checked="ReloadContextFromGUI">Comma Seperated List</RadioButton>
+                                            <TextBox Grid.Column="4"
+                                                     Grid.Row="0"
+                                                     Name="paramNameSource_CSV_value"
+                                                     Tag="{Binding Name}"
+                                                     KeyUp="paramNameSource_CSV_KeyUp"
+                                                     IsEnabled="{Binding ElementName=paramNameSource_CSV, Path=IsChecked}"></TextBox>
+                                            <!-- ============================ -->
+                                            <RadioButton GroupName="{Binding Name}"
+                                                         Name="paramNameSource_QueryResults"
+                                                         Grid.Column="3"
+                                                         Grid.Row="1"
+                                                         Checked="ReloadContextFromGUI">Result of Query</RadioButton>
+                                            <Grid Grid.Column="4"
+                                                  Grid.Row="1">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="40" />
+                                                    <ColumnDefinition Width="90" />
+                                                    <ColumnDefinition Width="25" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Name="paramNameSource_QueryResults_queryLabel"
+                                                           IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                           Tag="{Binding Name}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           TextWrapping="NoWrap"
+                                                           VerticalAlignment="Center"
+                                                           Grid.Row="0"
+                                                           Grid.Column="0"
+                                                           Margin="5,0,0,0">... no query entered ...</TextBlock>
+                                                <Button Name="paramNameSource_QueryResults_editButton"
+                                                        IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                        Click="paramNameSource_QueryResults_editButton_Click"
+                                                        Tag="{Binding Name}"
+                                                        Grid.Column="1"
+                                                        Grid.Row="0"
+                                                        Margin="5,0,0,0">Edit</Button>
+                                                <Label Name="paramNameSource_QueryResults_resultCount"
+                                                       IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"
+                                                       Tag="{Binding Name}"
+                                                       Grid.Column="2"
+                                                       Grid.Row="0"
+                                                       Margin="5,0,0,0">0 Results</Label>
+                                                <mine:StatusImage x:Name="paramNameSource_QueryResults_statusImage"
+                                                                  Grid.Row="0"
+                                                                  Grid.Column="3"
+                                                                  VerticalAlignment="Center"
+                                                                  Tag="{Binding Name}"
+                                                                  Margin="5,0,0,0"
+                                                                  IsEnabled="{Binding ElementName=paramNameSource_QueryResults, Path=IsChecked}"></mine:StatusImage>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+                <Button Grid.Row="4"
+                        Grid.ColumnSpan="4"
+                        Width="150"
+                        HorizontalAlignment="Right"
+                        IsEnabled="{Binding CurrentContext.IsValidContext,ElementName=MainWin}"
+                        Click="RunTests"
+                        Margin="0,5,0,5">Run The Tests!</Button>
+
             </Grid>
-            <!-- =========================================================================================================== -->
-            <Rectangle Name="greyRectangle" 
-                       Width="800" Height="600" 
-                       Fill="Gray" Opacity=".3"
-                       ></Rectangle>
-            <Border BorderThickness="2" BorderBrush="Black" Background="White"
-                    Canvas.Top="275" Height="50"
-                    Canvas.Left="325" Width="150"
-                    Name="statusContainer"
-                    >
-                <TextBlock Margin="5,5,5,5"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" 
-                           TextWrapping="Wrap" TextAlignment="Center"
-                           Name="statusLabel"
-                           >Currently Viewing Output</TextBlock>
-            </Border>
-        </Canvas>
+        </Grid>
+        <!-- =========================================================================================================== -->
     </DockPanel>
 </Window>

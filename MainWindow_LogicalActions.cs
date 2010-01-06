@@ -36,7 +36,7 @@ namespace Sprocket
                 {
                     spParameters.ItemsSource = data;
                     DisableWaitStatus();
-                    SPLoadedRow.Height = new GridLength();
+                    SPLoadedRow.Height = new GridLength(1, GridUnitType.Star);
                 }));
             }
             catch (Exception ex)

@@ -40,7 +40,8 @@ namespace Sprocket
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            whichParam.Text = "Query for populating " + ParamName + "\n\n*All columns returned from the query will be used as inputs.";
+            this.Title = "Query for populating " + ParamName;
+            whichParam.Text = "Query for populating " + ParamName + "\n*All columns returned from the query will be used as inputs.";
             query.Text = PreviousQuery;
         }
     }

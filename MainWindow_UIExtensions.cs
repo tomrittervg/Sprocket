@@ -15,15 +15,10 @@ namespace Sprocket
     {
         public void EnableWaitStatus(string message)
         {
-            statusContainer.Visibility = Visibility.Visible;
-            greyRectangle.Visibility = Visibility.Visible;
-            statusLabel.Text = message;
             mainLayoutGrid.IsEnabled = false;
         }
         public void DisableWaitStatus()
         {
-            statusContainer.Visibility = Visibility.Hidden;
-            greyRectangle.Visibility = Visibility.Hidden;
             mainLayoutGrid.IsEnabled = true;
         }
 

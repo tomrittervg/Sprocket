@@ -1,26 +1,42 @@
 ﻿<Window x:Class="Sprocket.WriteMiniQueryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="WriteMiniQueryWindow" 
-        MinHeight="250" MinWidth="410"
-        Height="250" Width="550"
+        Title="WriteMiniQueryWindow"
+        MinHeight="250"
+        MinWidth="410"
+        Height="250"
+        Width="550"
         Loaded="Window_Loaded"
-        >
-    <DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" 
-                    Orientation="Horizontal" HorizontalAlignment="Right" 
-                    Height="40"
-                    >
-            <TextBlock TextWrapping="Wrap" TextAlignment="Left" Margin="0,0,20,0" 
-                       Name="whichParam"
-                       ></TextBlock>
-            <Button Click="cancelEdit">Cancel</Button>
-            <Button Click="saveQuery">Save</Button>
-        </StackPanel>
+        ShowInTaskbar="false">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="50" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
 
-        <TextBox 
-            AcceptsTab="True" AcceptsReturn="True" TextWrapping="NoWrap"
-            Name="query"
-            ></TextBox>
-    </DockPanel>
+        <TextBox Grid.Row="0"
+                 Grid.Column="0"
+                 Grid.ColumnSpan="3"
+                 AcceptsTab="True"
+                 AcceptsReturn="True"
+                 TextWrapping="NoWrap"
+                 Name="query"></TextBox>
+
+        <TextBlock TextWrapping="Wrap"
+                   TextAlignment="Left"
+                   Name="whichParam"
+                   Grid.Column="0"
+                   Grid.Row="1"></TextBlock>
+        <Button Grid.Column="1"
+                Grid.Row="1"
+                Click="cancelEdit">Cancel</Button>
+        <Button Grid.Column="2"
+                Grid.Row="1"
+                Click="saveQuery">Save</Button>
+    </Grid>
 </Window>
