@@ -43,7 +43,8 @@ namespace Sprocket.SQL
                                 FROM sys.procedures sp with (nolock) 
                                 INNER JOIN sys.parameters parm with (nolock) ON sp.object_id = parm.object_id
                                 INNER JOIN sys.types typ with (nolock) ON parm.system_type_id = typ.system_type_id
-                                WHERE sp.name = @procName";
+                                WHERE sp.name = @procName
+								ORDER BY parm.parameter_id ASC";
             cmd.Parameters.AddWithValue("@procName", procName);
 
             conn.Open();
