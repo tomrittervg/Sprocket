@@ -102,7 +102,7 @@ namespace Sprocket.SQL
         }
 
         private static Regex ProcParsingRegex = new Regex("\\s*(?<procmode>create|alter)\\s+(procedure|proc)\\s+(?<procname>\\w+)\\s*\\(?\\s*@", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        private static Regex ProcCleaningRegex = new Regex("\\s*--.+$", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Multiline);
+        private static Regex ProcCleaningRegex = new Regex("\\s*--.*$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
         public static string TurnFileIntoProcedure(string filename, string server, string database)
         {
             string fileText = File.ReadAllText(filename);
