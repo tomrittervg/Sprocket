@@ -94,6 +94,8 @@ namespace Sprocket
 
                     var resultCount = spParameters.GetFirstChildControl(x => x.Tag != null && x.Tag.ToString() == paramName && x.Name == "paramNameSource_QueryResults_resultCount") as Label;
                     resultCount.Content = parameter.TestValues.Count.ToString() + " Results";
+
+                    numTestsLabel.Content = (CurrentContext.QueryCombinations == 1 ? 0 : CurrentContext.QueryCombinations).ToString() + " Test Combinations";
                 }));
             }
             catch (SqlException ex)

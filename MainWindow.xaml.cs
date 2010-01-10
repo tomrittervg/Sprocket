@@ -65,15 +65,6 @@ namespace Sprocket
             }
         }
 
-        private void paramNameSource_QueryResults_editButton_Click(object sender, RoutedEventArgs e)
-        {
-            WriteMiniQueryWindow queryWin = new WriteMiniQueryWindow();
-            queryWin.mainWindowReference = this;
-            queryWin.ParamName = (sender as Button).Tag.ToString(); ;
-            queryWin.PreviousQuery = CurrentContext.ParameterValues.Find(x => x.Parameter.Name == queryWin.ParamName).Query;
-            queryWin.ShowDialog();
-        }
-
         private void ReloadContextFromGUI(object sender, RoutedEventArgs e)
         {
             //TODO: This function could be improved somehow to not reload everything when only one thing is changed... I think
@@ -105,6 +96,9 @@ namespace Sprocket
                     CurrentContext.ParameterValues.Find(x => x.Parameter.Name == radio.GroupName).TestType = testtype;
                 }
             }
+
+            //TODO: This line spread around several functions... it should be cleaned up somehow so it's only in one place.
+            numTestsLabel.Content = (CurrentContext.QueryCombinations == 1 ? 0 : CurrentContext.QueryCombinations).ToString() + " Test Combinations";
         }
 
         private void paramNameSource_CSV_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
@@ -114,6 +108,17 @@ namespace Sprocket
 
             if (txtBox.Name == "paramNameSource_CSV_value") paramTestValue.CSV = txtBox.Text;
             else throw new WTFException();
+
+            numTestsLabel.Content = (CurrentContext.QueryCombinations == 1 ? 0 : CurrentContext.QueryCombinations).ToString() + " Test Combinations";
+        }
+
+        private void paramNameSource_QueryResults_editButton_Click(object sender, RoutedEventArgs e)
+        {
+            WriteMiniQueryWindow queryWin = new WriteMiniQueryWindow();
+            queryWin.mainWindowReference = this;
+            queryWin.ParamName = (sender as Button).Tag.ToString(); ;
+            queryWin.PreviousQuery = CurrentContext.ParameterValues.Find(x => x.Parameter.Name == queryWin.ParamName).Query;
+            queryWin.ShowDialog();
         }
 
         private void originalProcLocation_AnotherProc_Name_LostFocus(object sender, RoutedEventArgs e)

@@ -68,7 +68,7 @@ namespace Sprocket
         }
 
         private static ComparisonPair RunTestCases(ComparisonPair runset, string server)
-        {
+        {//Note: this function may be run simultaneously in multiple threads
             var results = new ComparisonPair(runset.Old.ReplaceLast(".txt", ".results.txt"), runset.New.ReplaceLast(".txt", ".results.txt"));
 
             string oldArguments = string.Format("-S {0} -E -i \"{1}\" -o \"{2}\"", server, runset.Old, results.Old);

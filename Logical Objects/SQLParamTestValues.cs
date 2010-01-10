@@ -91,11 +91,13 @@ namespace Sprocket
             get
             {
                 if (this.TestType == SQLParamTestType.CSV)
-                    return this._csvValues.Count;
+                    if (this._csvValues == null) return 0;
+                    else return this._csvValues.Count;
                 else if (this.TestType == SQLParamTestType.Query)
-                    return this._queryValues.Count;
+                    if (this._queryValues == null) return 0;
+                    else return this._queryValues.Count;
                 else
-                    throw new WTFException();
+                    return 0;
             }
         }
 

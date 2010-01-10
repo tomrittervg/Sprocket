@@ -186,7 +186,8 @@ namespace Sprocket
         {
             get
             {
-                return this.ParameterValues.Aggregate<SQLParamTestValues, int, int>(1, (a, x) => a * x.QueryCombinations, x => x);
+                if (this.ParameterValues == null) return 0;
+                return this.ParameterValues.Aggregate<SQLParamTestValues, int, int>(1, (a, x) => a * (x.QueryCombinations == 0 ? 1 : x.QueryCombinations), x => x);
             }
         }
 
