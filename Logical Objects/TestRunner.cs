@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Sprocket
 {
@@ -15,7 +16,7 @@ namespace Sprocket
         private const int cTrivialNumberOfTestsLimit = 100;
         private static DiffEngine.IDiffEngine _diffEngine;
 
-        
+
         static TestRunner()
         {
             _diffEngine = new DiffEngine.TortoiseMerge();
@@ -25,10 +26,10 @@ namespace Sprocket
         {
             TestRunner.EnableWaitStatus("Beginning Tests");
 
-            int? _numTests = context.QueryCombinations;
+            int _numTests = context.QueryCombinations;
             if (_numTests < cTrivialNumberOfTestsLimit)
             {
-                var filesToRun = WriteTestCasesToFile(context);
+                var filesToRun = WriteAllTestCasesToFile(context);
 
                 TestRunner.EnableWaitStatus("Running Test Cases");
                 var fileResults = RunTestCases(filesToRun, context.Server);
@@ -38,10 +39,31 @@ namespace Sprocket
             }
             else
             {
-                //TODO: Splitting Tests Across Files
-                throw new WTFException("This number of tests isn't supported yet");
+                List<ComparisonPair> results = new List<ComparisonPair>();
+                int threads = 0, completed = 0;
+
+                TestRunner.EnableWaitStatus("Running Test Cases");
+                foreach (var pair in WriteTestCasesToFile(context))
+                {
+                    threads++;
+                    ThreadPool.QueueUserWorkItem(delegate(object data)
+                    {
+                        var tmp = RunTestCases(pair, context.Server);
+                        lock (results)
+                            results.Add(tmp);
+                        Interlocked.Increment(ref completed);
+                    });
+                }
+                while (completed != threads) Thread.Sleep(100);
+                if (results.Count != completed) throw new WTFException();
+
+                for (int i = 0; i < completed; i++)
+                {
+                    TestRunner.EnableWaitStatus("Displaying Differences " + i + " of " + completed);
+                    _diffEngine.CompareFiles(results[i]);
+                }
             }
-            
+
             TestRunner.DisableWaitStatus();
         }
 
@@ -64,20 +86,31 @@ namespace Sprocket
             job.WaitForExit();
             job.Close();
 
-            MainWindow.TemporaryFilesCreated.Add(results.Old);
-            MainWindow.TemporaryFilesCreated.Add(results.New);
+            lock (MainWindow.TemporaryFilesCreated)
+            {
+                MainWindow.TemporaryFilesCreated.Add(results.Old);
+                MainWindow.TemporaryFilesCreated.Add(results.New);
+            }
 
             return results;
         }
 
-        private static ComparisonPair WriteTestCasesToFile(TestContext context)
+        private static ComparisonPair WriteAllTestCasesToFile(TestContext context)
         {
             return WriteTestCasesToFile(context, 0, -1);
         }
+        private static IEnumerable<ComparisonPair> WriteTestCasesToFile(TestContext context)
+        {
+            int _numTests = context.QueryCombinations;
+            int testsPerCycle = GetNumTestsPerFile();
+
+            for (int i = 0; i < _numTests; i += testsPerCycle)
+            {
+                yield return WriteTestCasesToFile(context, i, testsPerCycle);
+            }
+        }
         private static ComparisonPair WriteTestCasesToFile(TestContext context, int offset, int limit)
         {
-            if (offset != 0 || limit != -1) throw new WTFException("Splitting Tests Across Files isn't really implemented yet...");
-
             string filenameOld = "", filenameNew = "";
 
             var root = Path.GetTempFileName();
@@ -98,7 +131,7 @@ namespace Sprocket
             for (int i = 0; i < testCases.Count; i++)
             {
                 if (i < offset) continue;
-                if (i > limit && limit > 0) break;
+                if (i > (offset + limit) && limit > 0) break;
 
                 var paramString = testCases[i].GetParameterString();
                 var paramStringEscaped = paramString.Replace("'", "''");
@@ -120,7 +153,7 @@ namespace Sprocket
         {
             //TODO: Run a random sample of procs and guess the size of each test case.  Then see how many test cases we can fit in a 1 or 2 meg file, and only
             //  put that many test cases per fileset
-            return 1000;
+            return 500;
         }
     }
 }
