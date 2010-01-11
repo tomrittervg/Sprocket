@@ -119,7 +119,7 @@ namespace Sprocket.SQL
                 var name = matchResults.Groups["procname"];
                 var newName = "sprockettestrun" + "_" + 
                     (MainWindow.CurrentProcess.Id | MainWindow.CurrentProcess.MachineName.GetHashCode()).ToString() + "_" +
-                    MainWindow.rndm.Next(9999).ToString() + "_" + 
+                    DateTime.Now.Ticks.ToString() + "_" + 
                     name.Value;
                 procText = procText.ReplaceFirst(name.Value, newName);
 
