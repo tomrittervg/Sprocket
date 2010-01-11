@@ -31,7 +31,7 @@ namespace Sprocket
         {
             var val = values[key.Name];
             
-            if (key.Type == "varchar")
+            if (key.Type.OneOf("varchar", "nvarchar", "text", "ntext"))
                 return "'" + val + "'";
             else
                 return val;
