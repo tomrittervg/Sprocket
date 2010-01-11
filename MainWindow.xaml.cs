@@ -96,7 +96,7 @@ namespace Sprocket
                     CurrentContext.ParameterValues.Find(x => x.Parameter.Name == radio.GroupName).TestType = testtype;
                 }
             }
-
+            
             //TODO: This line spread around several functions... it should be cleaned up somehow so it's only in one place.
             numTestsLabel.Content = (CurrentContext.QueryCombinations == 1 ? 0 : CurrentContext.QueryCombinations).ToString() + " Test Combinations";
         }

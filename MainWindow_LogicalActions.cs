@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Data.SqlClient;
+using System.Deployment.Application;
+
 namespace Sprocket
 {
     public partial class MainWindow : Window
@@ -135,7 +137,7 @@ namespace Sprocket
             ValidateProcParametersMatchCurrentContext(CurrentContext.ComparisonProc_AnotherProc_ProcName, originalProcLocation_AnotherProc_statusImage,
                 delegate(bool status) { CurrentContext.ComparisonProc_AnotherProc_Valid = status; });
         }
-        #endregion 
+        #endregion
 
         #region Generic Original Proc Comparison Functions
         protected void ValidateProcParametersMatchCurrentContext(string procName, StatusImage imgToUpdate, Action<bool> setValidStatus)
@@ -175,7 +177,7 @@ namespace Sprocket
         #endregion
 
         public void CheckUpdateStatus(object data)
-        {
+        {//As many update messages as possible should include "Man".  Any references you can make to aviator sunglasses or incorporating the word "gnarly" would also be excellent additions.
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             try
             {
@@ -184,7 +186,17 @@ namespace Sprocket
 
                 var latestVersion = new Version(response.GetResponseString());
 
-                if (currentVersion >= latestVersion)
+                bool isInstalled = true;
+                try { var throwaway = ApplicationDeployment.CurrentDeployment.TimeOfLastUpdateCheck; }
+                catch (Exception ex) { if (ex.Message == "Application is not installed.") isInstalled = false; }
+
+                if (!isInstalled)
+                    this.Dispatcher.Invoke((Action)(() =>
+                    {
+                        updateLabel.Text = "It looks like this is a debug build (or it's not installed for some reason).";
+                        currentVersionLabel.Text = "v" + currentVersion.ToString();
+                    }));
+                else if (currentVersion >= latestVersion)
                     this.Dispatcher.Invoke((Action)(() =>
                     {
                         updateLabel.Text = "This is the latest version of Sprocket.";
@@ -200,7 +212,20 @@ namespace Sprocket
                             updateLabel.TextDecorations = TextDecorations.Underline;
                             updateLabel.MouseUp += new System.Windows.Input.MouseButtonEventHandler(delegate(object sender, System.Windows.Input.MouseButtonEventArgs e)
                             {
-                                System.Diagnostics.Process.Start("http://ritter.vg/sprocket/update.html");
+                                MessageBox.Show("Rock on man!  I'm gonna update the shit out of this application, and then disappear, cause WPF doesn't have a Application.Restart method.  You're gonna have to re-open me.", 
+                                    "Thanks!", MessageBoxButton.OK, MessageBoxImage.Error);
+                                try
+                                {
+                                    ApplicationDeployment.CurrentDeployment.Update();
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show("Error while Updating Application, Bailing Out.  Sorry Man!", "Oh Shit", MessageBoxButton.OK, MessageBoxImage.Error);
+                                }
+                                finally
+                                {
+                                    this.Close();
+                                }
                             });
                         }));
             }
