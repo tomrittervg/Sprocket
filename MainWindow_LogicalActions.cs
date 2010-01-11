@@ -37,8 +37,17 @@ namespace Sprocket
                 this.Dispatcher.Invoke((Action)(() =>
                 {
                     spParameters.ItemsSource = data;
-                    DisableWaitStatus();
                     SPLoadedRow.Height = new GridLength(1, GridUnitType.Star);
+                    
+                    originalProcLocation_AnotherProc.IsChecked = false;
+                    originalProcLocation_AnotherProc_Name.Text = "";
+                    originalProcLocation_AnotherProc_statusImage.Source = null;
+
+                    originalProcLocation_PhysicalFile.IsChecked = false;
+                    originalProcLocation_PhysicalFile_Name.Content = "";
+                    originalProcLocation_PhysicalFile_statusImage.Source = null;
+
+                    DisableWaitStatus();
                 }));
             }
             catch (Exception ex)

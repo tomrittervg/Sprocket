@@ -174,6 +174,10 @@ namespace Sprocket
                 ParameterValues.Add(new SQLParamTestValues(data[i]));
                 ParameterValues[i].PropertyChanged += new PropertyChangedEventHandler(SQLParameterPropertyChanged);
             }
+            this.OriginalProcLocation = OriginalProcLocations.Unset;
+            this.ComparisonProc_AnotherProc_ProcName = "";
+            this.ComparisonProc_PhysicalFile_Filename = "";
+            this.ComparisonProc_PhysicalFile_ProcName = "";
         }
 
         public void RunTests()
